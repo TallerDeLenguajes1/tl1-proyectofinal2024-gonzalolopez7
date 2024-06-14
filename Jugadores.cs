@@ -45,12 +45,26 @@ public static class Jugadores
         string url = "https://api.balldontlie.io/v1/players?";
 
         foreach (var jugador in diccionarioJugadores)
-        {
-            
+        {   
             url += $"player_ids[]={jugador.Key}&";
-
         }
         url += "per_page=100";
+
+        return url;
+    }
+
+    public static string obtenerURLEstadisticas(List<Jugador> listaJugadores, int season) {
+
+        string url = $"https://api.balldontlie.io/v1/season_averages?season={season}&";
+
+        foreach (var jugador in listaJugadores)
+        {
+            url += $"player_ids[]={jugador.Id}";
+            if (listaJugadores.Last() != jugador)
+            {
+                url += "&";
+            }
+        }
 
         return url;
     }

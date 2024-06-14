@@ -14,4 +14,17 @@ response.EnsureSuccessStatusCode();
 JugadorData jugadoresResponseBody = await response.Content.ReadFromJsonAsync<JugadorData>();
 List<Jugador> listaJugadores = jugadoresResponseBody.ListaJugadores;
 
+string urlEstadisticas = Jugadores.obtenerURLEstadisticas(listaJugadores, 2023);
+
+response = await client.GetAsync(urlEstadisticas);
+response.EnsureSuccessStatusCode();
+
+EstadisticasData estadisticasResponseBody = await response.Content.ReadFromJsonAsync<EstadisticasData>();
+estadisticasResponseBody.ListaEstadisticas = estadisticasResponseBody.ListaEstadisticas.OrderBy(Estadisticas => Estadisticas.Id).ToList();
+
+for (int i = 0; i < listaJugadores.Count(); i++)
+{
+    listaJugadores[i].Estadisticas = estadisticasResponseBody.ListaEstadisticas[i];
+}
+
 Console.ReadKey();
