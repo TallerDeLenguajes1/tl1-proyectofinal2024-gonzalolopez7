@@ -1,36 +1,30 @@
-
 using System.Text.Json.Serialization;
 
 public class JugadorData
 {
-
     List<Jugador> listaJugadores;
 
     [JsonPropertyName("data")]
     public List<Jugador> ListaJugadores { get => listaJugadores; set => listaJugadores = value; }
-
 }
 
-public class EstadisticasData
+public class StatsData
 {
-
-    List<Estadisticas> listaEstadisticas;
+    List<Stats> listaStats;
 
     [JsonPropertyName("data")]
-    public List<Estadisticas> ListaEstadisticas { get => listaEstadisticas; set => listaEstadisticas = value; }
+    public List<Stats> ListaStats { get => listaStats; set => listaStats = value; }
 }
 
 public class Jugador
-{
-    
+{ 
     int id;
     string firstName;
     string lastName;
     int jerseyNumber;
     string country;
     Team team;
-
-    Estadisticas estadisticas;
+    Stats stats;
 
     [JsonPropertyName("id")]
     public int Id { get => id; set => id = value; }
@@ -51,11 +45,11 @@ public class Jugador
     public Team Team { get => team; set => team = value; }
 
     [JsonPropertyName("stats")]
-    public Estadisticas Estadisticas { get => estadisticas; set => estadisticas = value; }
+    public Stats Stats { get => stats; set => stats = value; }
 }
+
 public class Team
 {
-
     string fullName;
     string abbreviation;
 
@@ -64,12 +58,10 @@ public class Team
 
     [JsonPropertyName("abbreviation")]
     public string Abbreviation { get => abbreviation; set => abbreviation = value; }
-
 }
 
-public class Estadisticas
+public class Stats
 {
-
     int id;
     float fg;
     float fg3;
@@ -106,5 +98,11 @@ public class Estadisticas
 
     [JsonPropertyName("blk")]
     public float Blk { get => blk; set => blk = value; }
+}
 
+public enum Rol
+{
+    Capitan,
+    Atacante,
+    Defensor
 }
