@@ -4,18 +4,32 @@ public class Personaje
     Datos datos;
     Estadisticas estadisticas;
 
+    public Personaje(Datos datos, Estadisticas estadisticas)
+    {
+        this.datos = datos;
+        this.estadisticas = estadisticas;
+    }
+
     public Datos Datos { get => datos; set => datos = value; }
     public Estadisticas Estadisticas { get => estadisticas; set => estadisticas = value; }
 }
 
 public class Datos
 {
-
     string nombre;
     string apellido;
     int numero;
     string nacionalidad;
     Equipo equipo;
+
+    public Datos(string nombre, string apellido, int numero, string nacionalidad, Equipo equipo)
+    {
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.numero = numero;
+        this.nacionalidad = nacionalidad;
+        this.equipo = equipo;
+    }
 
     public string Nombre { get => nombre; set => nombre = value; }
     public string Apellido { get => apellido; set => apellido = value; }
@@ -29,19 +43,36 @@ public class Equipo
     string nombre;
     string abreviacion;
 
+    public Equipo(string nombre, string abreviacion)
+    {
+        this.nombre = nombre;
+        this.abreviacion = abreviacion;
+    }
+
     public string Nombre { get => nombre; set => nombre = value; }
     public string Abreviacion { get => abreviacion; set => abreviacion = value; }
 }
 
 public class Estadisticas
 {
-    float tiro;
-    float creacion;
-    float defensaPerimetro;
-    float defensaInterior;
+    double tiro;
+    double creacion;
+    double defensaPerimetro;
+    double defensaInterior;
+    double promedio;
 
-    public float Tiro { get => tiro; set => tiro = value; }
-    public float Creacion { get => creacion; set => creacion = value; }
-    public float DefensaPerimetro { get => defensaPerimetro; set => defensaPerimetro = value; }
-    public float DefensaInterior { get => defensaInterior; set => defensaInterior = value; }
+    public Estadisticas(double tiro, double creacion, double defensaPerimetro, double defensaInterior, double promedio)
+    {
+        this.tiro = tiro;
+        this.creacion = creacion;
+        this.defensaPerimetro = defensaPerimetro;
+        this.defensaInterior = defensaInterior;
+        this.promedio = promedio;
+    }
+
+    public double Tiro { get => tiro; set => tiro = value; }
+    public double Creacion { get => creacion; set => creacion = value; }
+    public double DefensaPerimetro { get => defensaPerimetro; set => defensaPerimetro = value; }
+    public double DefensaInterior { get => defensaInterior; set => defensaInterior = value; }
+    public double Promedio { get => promedio; set => promedio = value; }
 }

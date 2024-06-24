@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 public static class Jugadores
 {
     private static Dictionary<Rol, Dictionary<int, string>> obtenerDiccionarioJugadores()
@@ -14,6 +15,18 @@ public static class Jugadores
             {237, "Lebron James"},
             {434, "Jayson Tatum"}
         };
+        
+        var diccionarioAtacantes = new Dictionary<int, string>()
+        {
+            {57, "Devin Booker"},
+            {70, "Jaylen Brown"},
+            {115, "Stephen Curry"},
+            {490, "Trae Young"},
+            {666786, "Ja Morant"},
+            {3547238, "Anthony Edwards"},
+            {3547239, "LaMello Ball"},
+            {3547245, "Tyrese Haliburton"}
+        };
 
         var diccionarioDefensores = new Dictionary<int, string>()
         {
@@ -27,22 +40,10 @@ public static class Jugadores
             {666969, "Zion Williamson"}
         };
 
-        var diccionarioAtacantes = new Dictionary<int, string>()
-        {
-            {57, "Devin Booker"},
-            {70, "Jaylen Brown"},
-            {115, "Stephen Curry"},
-            {490, "Trae Young"},
-            {666786, "Ja Morant"},
-            {3547238, "Anthony Edwards"},
-            {3547239, "LaMello Ball"},
-            {3547245, "Tyrese Haliburton"}
-        };
-
         var diccionarioJugadores = new Dictionary<Rol, Dictionary<int, string>>(){
             {Rol.Capitan, diccionarioCapitanes},
-            {Rol.Defensor, diccionarioDefensores},
-            {Rol.Atacante, diccionarioAtacantes}
+            {Rol.Atacante, diccionarioAtacantes},
+            {Rol.Defensor, diccionarioDefensores}
         };
 
         return diccionarioJugadores;

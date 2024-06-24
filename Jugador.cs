@@ -63,41 +63,41 @@ public class Team
 public class Stats
 {
     int id;
-    float fg;
-    float fg3;
-    float ft;
-    float ast;
-    float to;
-    float stl;
-    float dreb;
-    float blk;
+    double fg;
+    double fg3;
+    double ft;
+    double ast;
+    double to;
+    double stl;
+    double dreb;
+    double blk;
 
     [JsonPropertyName("player_id")]
     public int Id { get => id; set => id = value; }
 
     [JsonPropertyName("fg_pct")]
-    public float Fg { get => fg; set => fg = value; }
+    public double Fg { get => fg; set => fg = value; }
 
     [JsonPropertyName("fg3_pct")]
-    public float Fg3 { get => fg3; set => fg3 = value; }
+    public double Fg3 { get => fg3; set => fg3 = value; }
 
     [JsonPropertyName("ft_pct")]
-    public float Ft { get => ft; set => ft = value; }
+    public double Ft { get => ft; set => ft = value; }
 
     [JsonPropertyName("ast")]
-    public float Ast { get => ast; set => ast = value; }
+    public double Ast { get => ast; set => ast = value; }
 
     [JsonPropertyName("turnover")]
-    public float To { get => to; set => to = value; }
+    public double To { get => to; set => to = value; }
 
     [JsonPropertyName("stl")]
-    public float Stl { get => stl; set => stl = value; }
+    public double Stl { get => stl; set => stl = value; }
 
     [JsonPropertyName("dreb")]
-    public float Dreb { get => dreb; set => dreb = value; }
+    public double Dreb { get => dreb; set => dreb = value; }
 
     [JsonPropertyName("blk")]
-    public float Blk { get => blk; set => blk = value; }
+    public double Blk { get => blk; set => blk = value; }
 }
 
 public enum Rol
