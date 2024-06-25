@@ -1,6 +1,9 @@
-﻿List<Jugador> listaCapitanes = await Jugadores.ObtenerListaJugadores(Rol.Capitan);
-List<Jugador> listaAtacantes = await Jugadores.ObtenerListaJugadores(Rol.Atacante);
-List<Jugador> listaDefensores = await Jugadores.ObtenerListaJugadores(Rol.Defensor);
+﻿List<Player> listaCapitanes = await ConsumirAPI.ObtenerListaJugadores(Rol.Capitan);
+List<Player> listaAtacantes = await ConsumirAPI.ObtenerListaJugadores(Rol.Atacante);
+List<Player> listaDefensores = await ConsumirAPI.ObtenerListaJugadores(Rol.Defensor);
+List<Teams> listaEquipos = await ConsumirAPI.ObtenerEquipos();
+
+listaEquipos.RemoveRange(30, 15);
 
 var capitanes = new List<Personaje>();
 var atacantes = new List<Personaje>();

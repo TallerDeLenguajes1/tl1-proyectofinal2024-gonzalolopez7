@@ -1,11 +1,11 @@
 using System.Text.Json.Serialization;
 
-public class JugadorData
+public class PlayerData
 {
-    List<Jugador> listaJugadores;
+    List<Player> listaJugadores;
 
     [JsonPropertyName("data")]
-    public List<Jugador> ListaJugadores { get => listaJugadores; set => listaJugadores = value; }
+    public List<Player> playerList { get => listaJugadores; set => listaJugadores = value; }
 }
 
 public class StatsData
@@ -13,10 +13,10 @@ public class StatsData
     List<Stats> listaStats;
 
     [JsonPropertyName("data")]
-    public List<Stats> ListaStats { get => listaStats; set => listaStats = value; }
+    public List<Stats> statList { get => listaStats; set => listaStats = value; }
 }
 
-public class Jugador
+public class Player
 { 
     int id;
     string firstName;

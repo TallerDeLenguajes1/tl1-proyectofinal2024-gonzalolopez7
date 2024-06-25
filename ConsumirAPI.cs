@@ -1,6 +1,5 @@
 using System.Net.Http.Json;
-using System.Text.Json;
-public static class Jugadores
+public static class ConsumirAPI
 {
     private static Dictionary<Rol, Dictionary<int, string>> obtenerDiccionarioJugadores()
     {
@@ -69,7 +68,7 @@ public static class Jugadores
         return url;
     }
 
-    private static string ObtenerURLEstadisticas(List<Jugador> listaJugadores, int season)
+    private static string ObtenerURLEstadisticas(List<Player> listaJugadores, int season)
     {
         string url = $"https://api.balldontlie.io/v1/season_averages?season={season}&";
 
@@ -85,35 +84,50 @@ public static class Jugadores
         return url;
     }
 
-    public static async Task<List<Jugador>> ObtenerListaJugadores(Rol rol)
+    public static async Task<List<Player>> ObtenerListaJugadores(Rol rol)
     {
-        var diccionarioJugadores = Jugadores.obtenerDiccionarioJugadores();
-        string urlJugadores = Jugadores.ObtenerURLJugadores(diccionarioJugadores, rol);
+        var diccionarioJugadores = ConsumirAPI.obtenerDiccionarioJugadores();
+        string urlPlayers = ConsumirAPI.ObtenerURLJugadores(diccionarioJugadores, rol);
         string apiKey = "d464875f-8435-459e-9caa-4cbd46861aed";
 
         HttpClient client = new HttpClient();
         client.DefaultRequestHeaders.Add("Authorization", apiKey);
 
-        HttpResponseMessage response = await client.GetAsync(urlJugadores);
+        HttpResponseMessage response = await client.GetAsync(urlPlayers);
         response.EnsureSuccessStatusCode();
 
-        JugadorData jugadoresResponseBody = await response.Content.ReadFromJsonAsync<JugadorData>();
-        List<Jugador> listaJugadores = jugadoresResponseBody.ListaJugadores;
+        PlayerData playersResponseBody = await response.Content.ReadFromJsonAsync<PlayerData>();
+        List<Player> playerList = playersResponseBody.playerList;
 
-        string urlEstadisticas = Jugadores.ObtenerURLEstadisticas(listaJugadores, 2023);
+        string urlStats = ConsumirAPI.ObtenerURLEstadisticas(playerList, 2023);
 
-        response = await client.GetAsync(urlEstadisticas);
+        response = await client.GetAsync(urlStats);
         response.EnsureSuccessStatusCode();
 
-        StatsData estadisticasResponseBody = await response.Content.ReadFromJsonAsync<StatsData>();
-        estadisticasResponseBody.ListaStats = estadisticasResponseBody.ListaStats.OrderBy(Estadisticas => Estadisticas.Id).ToList();
+        StatsData statsResponseBody = await response.Content.ReadFromJsonAsync<StatsData>();
+        statsResponseBody.statList = statsResponseBody.statList.OrderBy(Estadisticas => Estadisticas.Id).ToList();
 
-        for (int i = 0; i < listaJugadores.Count(); i++)
+        for (int i = 0; i < playerList.Count(); i++)
         {
-            listaJugadores[i].Stats = estadisticasResponseBody.ListaStats[i];
+            playerList[i].Stats = statsResponseBody.statList[i];
         }
 
-        return listaJugadores;
+        return playerList;
     }
 
+    public static async Task<List<Teams>> ObtenerEquipos() {
+        string urlTeams = "https://api.balldontlie.io/v1/teams";
+        string apiKey = "d464875f-8435-459e-9caa-4cbd46861aed";
+
+        HttpClient client = new HttpClient();
+        client.DefaultRequestHeaders.Add("Authorization", apiKey);
+
+        HttpResponseMessage response = await client.GetAsync(urlTeams);
+        response.EnsureSuccessStatusCode();
+
+        TeamsData teamsResponseBody = await response.Content.ReadFromJsonAsync<TeamsData>();
+        List<Teams> teamsList = teamsResponseBody.TeamsList;
+
+        return teamsList;
+    }
 }
