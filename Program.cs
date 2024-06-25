@@ -1,7 +1,4 @@
-﻿
-using System.Text.Json;
-
-List<Jugador> listaCapitanes = await Jugadores.ObtenerListaJugadores(Rol.Capitan);
+﻿List<Jugador> listaCapitanes = await Jugadores.ObtenerListaJugadores(Rol.Capitan);
 List<Jugador> listaAtacantes = await Jugadores.ObtenerListaJugadores(Rol.Atacante);
 List<Jugador> listaDefensores = await Jugadores.ObtenerListaJugadores(Rol.Defensor);
 
@@ -144,5 +141,11 @@ foreach (var jugador in listaDefensores)
     ));
 
 }
+
+// EJECUCION DEL JUEGO
+
+Menus.Inicio();
+Menus.MenuInicio();
+Personaje[] personajesSeleccionados = Menus.seleccionPersonajes(capitanes, atacantes, defensores);
 
 Console.ReadKey();

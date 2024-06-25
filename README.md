@@ -34,7 +34,7 @@
 
 
 
-## FORMULAS BASADA EN LOS PROMEDIOS
+## FORMULAS ESTADISTICAS
 ### CAPITANES
 - Tiro: [(4 * fg) + (3 * fg3) + (1.6 * ft)] * 1.8       - (8.0 - 9.5)
 - Creacion: ast / to * 3.5                              - (8.0 - 9.5)
