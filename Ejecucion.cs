@@ -1,5 +1,3 @@
-using System.Net.NetworkInformation;
-
 public static class Ejecucion
 {
     
@@ -216,14 +214,25 @@ public static class Ejecucion
                 ElegirEquipo(capitanes, atacantes, defensores)
             };
 
-            var idUsados = new List<int>();
-            for (int i = 0; i < 3; i++)
-                idUsados.Add(equipos[0][i].Datos.Id);
+            Random random = new Random();
+            var capitanesDesordenados = capitanes.OrderBy(x => random.Next()).ToList();
+            var atacantesDesordenados = atacantes.OrderBy(x => random.Next()).ToList();
+            var defensoresDesordenados = defensores.OrderBy(x => random.Next()).ToList();
+            capitanesDesordenados.Remove(equipos[0][0]);
+            atacantesDesordenados.Remove(equipos[0][1]);
+            defensoresDesordenados.Remove(equipos[0][2]);
 
-            for (int i = 1; i < 8; i++)
+            for (int i = 0; i < 7; i++)
             {
-                equipos.Add(GenerarEquipo(idUsados, capitanes, atacantes, defensores));
+                var nuevoEquipo = new List<Personaje>(){
+                    capitanesDesordenados[i],
+                    atacantesDesordenados[i],
+                    defensoresDesordenados[i]
+                };
+
+                equipos.Add(nuevoEquipo);
             }
+
             return equipos;
         }
         
@@ -294,36 +303,6 @@ public static class Ejecucion
 
             }
 
-        }
-
-        private static List<Personaje> GenerarEquipo(List<int> idUsados, List<Personaje> capitanes, List<Personaje> atacantes, List<Personaje> defensores) {
-            
-            var nuevoEquipo = new List<Personaje>(){
-                ElegirPersonajeAleatorio(idUsados, capitanes),
-                ElegirPersonajeAleatorio(idUsados, atacantes),
-                ElegirPersonajeAleatorio(idUsados, defensores)
-            };
-
-            return nuevoEquipo;
-        }
-
-        private static Personaje ElegirPersonajeAleatorio(List<int> idUsados, List<Personaje> personajes) {
-
-            var random = new Random();
-            int valor;
-            bool b;
-            do                                                          // BUSCAR UN PERSONAJE ALEATORIO EN LA LISTA
-            {
-                b = false;
-                valor = random.Next(0, 8);
-                foreach (var id in idUsados)
-                    if (id == personajes[valor].Datos.Id)                // VERIFICA QUE EL ID NO COINCIDA CON EL ID DE UN JUGADOR YA ASIGNADO A OTRO EQUIPO
-                        b = true;
-
-            } while (b);
-
-            idUsados.Add(personajes[valor].Datos.Id);
-            return personajes[valor];
         }
 
     }

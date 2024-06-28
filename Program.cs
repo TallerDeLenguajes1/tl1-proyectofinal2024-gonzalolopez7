@@ -15,5 +15,4 @@ Ejecucion.Menus.Inicio();
 Ejecucion.Menus.MenuInicio();
 List<List<Personaje>> equipos = Ejecucion.Equipos.CrearEquipos(capitanes, atacantes, defensores);
 
-
 Console.ReadKey();
