@@ -1,7 +1,7 @@
 public static class Ejecucion
 {
     
-    public static List<Personaje> CrearListaPersonajes(List<Player> jugadores, Rol rol) {
+    public static List<Personaje> CrearPersonajes(List<Player> jugadores, Rol rol) {
         var listaPersonajes = new List<Personaje>();
 
         double tiro, creacion, defensaPerimetro, defensaInterior, promedio;
@@ -44,7 +44,7 @@ public static class Ejecucion
                         jugador.LastName,
                         jugador.JerseyNumber,
                         jugador.Country,
-                        new Equipo(
+                        new DatosEquipo(
                             jugador.Team.FullName,
                             jugador.Team.Abbreviation
                         )
@@ -92,7 +92,7 @@ public static class Ejecucion
                         jugador.LastName,
                         jugador.JerseyNumber,
                         jugador.Country,
-                        new Equipo(
+                        new DatosEquipo(
                             jugador.Team.FullName,
                             jugador.Team.Abbreviation
                         )
@@ -140,7 +140,7 @@ public static class Ejecucion
                         jugador.LastName,
                         jugador.JerseyNumber,
                         jugador.Country,
-                        new Equipo(
+                        new DatosEquipo(
                             jugador.Team.FullName,
                             jugador.Team.Abbreviation
                         )
@@ -182,35 +182,14 @@ public static class Ejecucion
             return opcion;
         }
 
-        public static Teams MenuElegirEquipo(List<Teams> equipos) {
-            int opcion; bool b = true;
-
-            for (int i = 0; i < equipos.Count(); i++)
-                Console.WriteLine($"{i+1}. {equipos[i].Nombre} - {equipos[i].Abreviacion}");
-
-            do
-            {
-                
-                Console.WriteLine("\nSeleccion: ");
-                b = int.TryParse(Console.ReadLine(), out opcion);
-                if (opcion < 1 || opcion > 8 || !b) {
-                    Console.WriteLine("Opcion no valida, ingresar nuevamente");
-                    b = false;
-                }
-                
-            } while (!b);
-
-            return equipos[opcion-1];
-        }
-
     }
 
     public static class Equipos
     {
 
-        public static List<List<Personaje>> CrearEquipos(List<Personaje> capitanes, List<Personaje> atacantes, List<Personaje> defensores) {
+        public static List<Equipo> CrearEquipos(List<Personaje> capitanes, List<Personaje> atacantes, List<Personaje> defensores, List<Teams> equiposAPI) {
 
-            var equipos = new List<List<Personaje>>(8){
+            var equipos = new List<Equipo>(8){
                 ElegirEquipo(capitanes, atacantes, defensores)
             };
 
@@ -218,26 +197,28 @@ public static class Ejecucion
             var capitanesDesordenados = capitanes.OrderBy(x => random.Next()).ToList();
             var atacantesDesordenados = atacantes.OrderBy(x => random.Next()).ToList();
             var defensoresDesordenados = defensores.OrderBy(x => random.Next()).ToList();
-            capitanesDesordenados.Remove(equipos[0][0]);
-            atacantesDesordenados.Remove(equipos[0][1]);
-            defensoresDesordenados.Remove(equipos[0][2]);
+            capitanesDesordenados.Remove(equipos[0].Capitan);
+            atacantesDesordenados.Remove(equipos[0].Atacante);
+            defensoresDesordenados.Remove(equipos[0].Defensor);
 
             for (int i = 0; i < 7; i++)
             {
-                var nuevoEquipo = new List<Personaje>(){
+                var nuevoEquipo = new Equipo(
                     capitanesDesordenados[i],
                     atacantesDesordenados[i],
                     defensoresDesordenados[i]
-                };
-
+                );
+                
                 equipos.Add(nuevoEquipo);
             }
+
+            AsignarNombreEquipos(equipos, equiposAPI);
 
             return equipos;
         }
         
-        private static List<Personaje> ElegirEquipo(List<Personaje> capitanes, List<Personaje> atacantes, List<Personaje> defensores) {
-            var equipoUsuario = new List<Personaje>();
+        private static Equipo ElegirEquipo(List<Personaje> capitanes, List<Personaje> atacantes, List<Personaje> defensores) {
+            var equipoUsuario = new Equipo();
             int opcion; bool b = true;
 
             Console.WriteLine("\tSELECCIONAR CAPITAN");
@@ -253,7 +234,7 @@ public static class Ejecucion
                 }
                 
             } while (!b);
-            equipoUsuario.Add(capitanes.ElementAt(opcion-1));
+            equipoUsuario.Capitan = capitanes.ElementAt(opcion-1);
 
             Console.WriteLine("\tSELECCIONAR ATACANTE");
             mostrarPersonajes(atacantes);
@@ -268,7 +249,7 @@ public static class Ejecucion
                 }
                 
             } while (!b);
-            equipoUsuario.Add(atacantes.ElementAt(opcion-1));
+            equipoUsuario.Atacante = atacantes.ElementAt(opcion-1);
 
             Console.WriteLine("\tSELECCIONAR DEFENSORES");
             mostrarPersonajes(defensores);
@@ -283,7 +264,7 @@ public static class Ejecucion
                 }
                 
             } while (!b);
-            equipoUsuario.Add(defensores.ElementAt(opcion-1));
+            equipoUsuario.Defensor = defensores.ElementAt(opcion-1);
 
             return equipoUsuario;
         }
@@ -303,6 +284,72 @@ public static class Ejecucion
 
             }
 
+        }
+
+        private static Teams ElegirNombreEquipo(List<Teams> equipos) {
+            int opcion; bool b = true;
+
+            for (int i = 0; i < equipos.Count(); i++)
+                Console.WriteLine($"{i+1}. {equipos[i].Fullname} - {equipos[i].Abbreviation}");
+
+            do
+            {
+                
+                Console.WriteLine("\nSeleccion: ");
+                b = int.TryParse(Console.ReadLine(), out opcion);
+                if (opcion < 1 || opcion > 8 || !b) {
+                    Console.WriteLine("Opcion no valida, ingresar nuevamente");
+                    b = false;
+                }
+                
+            } while (!b);
+
+            return equipos[opcion-1];
+        }
+
+        private static void AsignarNombreEquipos(List<Equipo> equipos, List<Teams> equiposAPI) {
+
+            var equipoUsuario = ElegirNombreEquipo(equiposAPI);
+            equipos[0].Nombre = equipoUsuario.Fullname;
+            equipos[0].Abreviacion = equipoUsuario.Abbreviation;
+
+            Random random = new Random();
+            var equiposAPIDesordenados = equiposAPI.OrderBy(x => random.Next()).ToList();
+            equiposAPIDesordenados.Remove(equipoUsuario);
+
+            for (int i = 1; i < 7; i++)
+            {
+                
+                equipos[i].Nombre = equiposAPIDesordenados[i-1].Fullname;
+                equipos[i].Abreviacion = equiposAPIDesordenados[i-1].Abbreviation;
+                equiposAPIDesordenados.RemoveAt(i-1);
+
+            }
+
+        }
+
+    }
+
+    public static class Partido
+    {
+        
+        public static List<Personaje> CrearPartido(List<Personaje> equipo1, List<Personaje> equipo2) {
+
+            
+
+            return equipo1;
+        }
+
+        private enum TipoAtaque {
+            Triple,
+            Bandeja,
+            Dunk,
+        }
+
+        private enum TipoDefensa {
+            Robo,
+            Bloqueo,
+            Falta
         }
 
     }

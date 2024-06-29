@@ -12,12 +12,12 @@ public class TeamsData {
 public class Teams
 {
     
-    string nombre;
-    string abreviacion;
+    string full_name;
+    string abbreviation;
 
     [JsonPropertyName("full_name")]
-    public string Nombre { get => nombre; set => nombre = value; }
+    public string Fullname { get => full_name; set => full_name = value; }
 
     [JsonPropertyName("abbreviation")]
-    public string Abreviacion { get => abreviacion; set => abreviacion = value; }
+    public string Abbreviation { get => abbreviation; set => abbreviation = value; }
 }

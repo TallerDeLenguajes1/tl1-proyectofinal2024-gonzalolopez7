@@ -1,4 +1,3 @@
-
 public class Personaje
 {
     Datos datos;
@@ -25,9 +24,9 @@ public class Datos
     string apellido;
     int numero;
     string nacionalidad;
-    Equipo equipo;
+    DatosEquipo equipo;
 
-    public Datos(int id, string nombre, string apellido, int numero, string nacionalidad, Equipo equipo)
+    public Datos(int id, string nombre, string apellido, int numero, string nacionalidad, DatosEquipo equipo)
     {
         this.id = id;
         this.nombre = nombre;
@@ -42,15 +41,15 @@ public class Datos
     public string Apellido { get => apellido; set => apellido = value; }
     public int Numero { get => numero; set => numero = value; }
     public string Nacionalidad { get => nacionalidad; set => nacionalidad = value; }
-    public Equipo Equipo { get => equipo; set => equipo = value; }
+    public DatosEquipo Equipo { get => equipo; set => equipo = value; }
 }
 
-public class Equipo
+public class DatosEquipo
 {
     string nombre;
     string abreviacion;
 
-    public Equipo(string nombre, string abreviacion)
+    public DatosEquipo(string nombre, string abreviacion)
     {
         this.nombre = nombre;
         this.abreviacion = abreviacion;
