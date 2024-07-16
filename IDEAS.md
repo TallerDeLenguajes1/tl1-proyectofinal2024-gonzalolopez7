@@ -1,0 +1,21 @@
+# IDEAS
+
+- historial de partidos
+- continuar la partida en otro momento
+- bonus por victoria (con condicion dificil)
+    - bonus de defensa
+    - bonus de ataque
+- cambiar tacticas de juego (timeout)
+    - aumentar defensa y reducir ataque
+    - aumentar ataque y reducir defensa
+- mejorar el sistema de faltas
+    - probabilidad de faltas dependiendo la situacion y el tipo de ataque
+- mensajes predeterminados dependiendo el tipo de ataque
+    - triples: 1. ata - 2. cap - 3. def
+    - bandejas: 1. cap - 2. def - 3. ata
+    - dunk: 1. ata - 2. cap - 3. def
+    - bloqueo: 1. def - 2. cap - 3. ata
+    - robo: 1. ata - 2. cap - 3. def
+    - rebote: 1. def - 2. cap - 3. ata
+- consumir city de la api
+    - poner ciudad como un campo de equipo para determinar ciudad de cada partido (ciudad de equipo local)

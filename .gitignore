@@ -8,11 +8,7 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 ### IGNORE .JSON
-atacantes.json
-capitanes.json
-defensores.json
-ModalidadPartido.md
-IDEAS.md
+
 
 # User-specific files
 *.rsuser

@@ -330,28 +330,141 @@ public static class Ejecucion
 
     }
 
-    public static class Partido
-    {
-        
-        public static List<Personaje> CrearPartido(List<Personaje> equipo1, List<Personaje> equipo2) {
+    public static class Partidos {
 
+        public class Partido
+        {
+
+            Equipo local;
+            Equipo visitante;
+            FasePartido fase;
+            int ptosLocal;
+            int ptosVisitante;
+            Equipo ganador;
+
+            public Equipo Local { get => local; set => local = value; }
+            public Equipo Visitante { get => visitante; set => visitante = value; }
+            public int PtosLocal { get => ptosLocal; }
+            public int PtosVisitante { get => ptosVisitante; }
+            private FasePartido Fase { get => fase; }
+
+            public void JugarPartido() {
+
+
+
+            }
+
+        }
+
+        private static int RealizarAtaque(Equipo equipoAtacante, Equipo equipoDefensor) {
             
+            var tipoDeAtaque = DeterminarTipoDeAtaque();
 
-            return equipo1;
+
         }
 
-        private enum TipoAtaque {
-            Triple,
-            Bandeja,
-            Dunk,
+        private static TipoDeAtaque DeterminarTipoDeAtaque() {
+
+            var random = new Random();
+            int opcion = random.Next(100);
+            if (opcion < 50)
+                return TipoDeAtaque.Bandeja;
+            if (opcion <= 50)
+                return TipoDeAtaque.Dunk;
+            if (opcion <= 80)
+                return TipoDeAtaque.Triple;
+            else
+                return TipoDeAtaque.Bandeja;        // NO TODOS LOS CAMINOS DEVUELVEN UN VALOR
         }
 
-        private enum TipoDefensa {
-            Robo,
-            Bloqueo,
-            Falta
+        private static TipoDeDefensa? DeterminarTipoDeDefensa(TipoDeAtaque tipoDeAtaque, Equipo equipoDefensor) {
+            
+            var random = new Random(Guid.NewGuid().GetHashCode());
+            int opcion = random.Next(100);
+            TipoDeDefensa tipoDeDefensa = TipoDeDefensa.Fallida;
+
+            if (tipoDeAtaque == TipoDeAtaque.Bandeja)
+            {
+                if (opcion < 25)
+                    tipoDeDefensa = TipoDeDefensa.Bloqueo;
+                if (opcion >= 25 && opcion < 40)
+                    tipoDeDefensa = TipoDeDefensa.Robo;
+            }
+            if (tipoDeAtaque == TipoDeAtaque.Dunk)
+            {
+                if (opcion < 20)
+                    tipoDeDefensa = TipoDeDefensa.Bloqueo;
+                if (opcion >= 20 && opcion < 30)
+                    tipoDeDefensa = TipoDeDefensa.Robo;
+            }
+            if (tipoDeAtaque == TipoDeAtaque.Triple)
+            {
+                if (opcion < 10)
+                    tipoDeDefensa = TipoDeDefensa.Bloqueo;
+                if (opcion >= 10 && opcion < 15)
+                    tipoDeDefensa = TipoDeDefensa.Robo;
+            }
+
+            if (tipoDeDefensa == TipoDeDefensa.Fallida)
+            {
+                
+            }
+
+        }
+
+        private static bool DeterminarFalta(TipoDeDefensa tipoDeDefensa, Equipo equipoDefensor) {
+
+            poner en todos las inicializaciones de random "Guid.NewGuid().GetHashCode()";
+
+        }
+
+        private static double ObtenerProbabilidadDeConversion(TipoDeAtaque tipoDeAtaque, Equipo equipoAtacante) {
+
+            double tiroEquipo = (equipoAtacante.Capitan.Estadisticas.Tiro + equipoAtacante.Atacante.Estadisticas.Tiro + equipoAtacante.Defensor.Estadisticas.Tiro) / 3;
+            double creacionEquipo = (equipoAtacante.Capitan.Estadisticas.Creacion + equipoAtacante.Atacante.Estadisticas.Creacion + equipoAtacante.Defensor.Estadisticas.Creacion) / 3;
+            var random = new Random();
+            int factorSuerte = random.Next(-5, 5);
+            double bonusEstadisticas;
+
+            if (tipoDeAtaque == TipoDeAtaque.Bandeja)
+            {
+                bonusEstadisticas = 0.7 * creacionEquipo + 0.3 * tiroEquipo;
+                return 60 + bonusEstadisticas + factorSuerte;
+            }
+            if (tipoDeAtaque == TipoDeAtaque.Dunk)
+            {
+                bonusEstadisticas = 0.7 * creacionEquipo + 0.3 * tiroEquipo;
+                return 40 + bonusEstadisticas + factorSuerte;
+            }
+            else
+            {
+                bonusEstadisticas = 0.3 * creacionEquipo + 0.7 * tiroEquipo;
+                return 30 + bonusEstadisticas + factorSuerte;
+            }
+
         }
 
     }
 
+    private enum TipoDeAtaque 
+    {
+        Bandeja,
+        Dunk,
+        Triple
+    }
+
+    private enum TipoDeDefensa
+    {
+        Bloqueo,
+        Robo,
+        Falta,
+        Fallida
+    }
 }
+
+enum FasePartido
+        {
+            CuartoDeFinal,
+            Semifinal,
+            Final
+        }

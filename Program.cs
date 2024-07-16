@@ -2,6 +2,7 @@
 List<Player> atacantesAPI = await ConsumirAPI.ObtenerListaJugadores(Rol.Atacante);
 List<Player> defensoresAPI = await ConsumirAPI.ObtenerListaJugadores(Rol.Defensor);
 List<Teams> equiposAPI = await ConsumirAPI.ObtenerEquipos();
+
 equiposAPI.RemoveRange(30, 15);     // ELIMINA LOS EQUIPOS ANTIGUOS Y CONSERVA LOS ACTUALES
 
 // LISTAS DE PERSONAJES SEPARADOS POR ROL Y ORDENADOS POR ID
