@@ -68,7 +68,7 @@ public static class ConsumirAPI
         return url;
     }
 
-    private static string ObtenerURLEstadisticas(List<Player> listaJugadores, int season)
+    private static string ObtenerURLEstadisticas(List<APIPlayer> listaJugadores, int season)
     {
         string url = $"https://api.balldontlie.io/v1/season_averages?season={season}&";
 
@@ -84,7 +84,7 @@ public static class ConsumirAPI
         return url;
     }
 
-    public static async Task<List<Player>> ObtenerListaJugadores(Rol rol)
+    public static async Task<List<APIPlayer>> ObtenerListaJugadores(Rol rol)
     {
         var diccionarioJugadores = ConsumirAPI.obtenerDiccionarioJugadores();
         string urlPlayers = ConsumirAPI.ObtenerURLJugadores(diccionarioJugadores, rol);
@@ -96,15 +96,15 @@ public static class ConsumirAPI
         HttpResponseMessage response = await client.GetAsync(urlPlayers);
         response.EnsureSuccessStatusCode();
 
-        PlayerData playersResponseBody = await response.Content.ReadFromJsonAsync<PlayerData>();
-        List<Player> playerList = playersResponseBody.playerList;
+        APIPlayerData playersResponseBody = await response.Content.ReadFromJsonAsync<APIPlayerData>();
+        List<APIPlayer> playerList = playersResponseBody.playerList;
 
         string urlStats = ConsumirAPI.ObtenerURLEstadisticas(playerList, 2023);
 
         response = await client.GetAsync(urlStats);
         response.EnsureSuccessStatusCode();
 
-        StatsData statsResponseBody = await response.Content.ReadFromJsonAsync<StatsData>();
+        APIStatsData statsResponseBody = await response.Content.ReadFromJsonAsync<APIStatsData>();
         statsResponseBody.statList = statsResponseBody.statList.OrderBy(Estadisticas => Estadisticas.Id).ToList();
 
         for (int i = 0; i < playerList.Count(); i++)

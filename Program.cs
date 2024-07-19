@@ -1,6 +1,6 @@
-﻿List<Player> capitanesAPI = await ConsumirAPI.ObtenerListaJugadores(Rol.Capitan);
-List<Player> atacantesAPI = await ConsumirAPI.ObtenerListaJugadores(Rol.Atacante);
-List<Player> defensoresAPI = await ConsumirAPI.ObtenerListaJugadores(Rol.Defensor);
+﻿List<APIPlayer> capitanesAPI = await ConsumirAPI.ObtenerListaJugadores(Rol.Capitan);
+List<APIPlayer> atacantesAPI = await ConsumirAPI.ObtenerListaJugadores(Rol.Atacante);
+List<APIPlayer> defensoresAPI = await ConsumirAPI.ObtenerListaJugadores(Rol.Defensor);
 List<Teams> equiposAPI = await ConsumirAPI.ObtenerEquipos();
 
 equiposAPI.RemoveRange(30, 15);     // ELIMINA LOS EQUIPOS ANTIGUOS Y CONSERVA LOS ACTUALES

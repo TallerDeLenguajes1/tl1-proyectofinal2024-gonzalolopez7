@@ -1,7 +1,10 @@
+using System.Reflection.Emit;
+using System.Reflection.Metadata.Ecma335;
+
 public static class Ejecucion
 {
     
-    public static List<Personaje> CrearPersonajes(List<Player> jugadores, Rol rol) {
+    public static List<Personaje> CrearPersonajes(List<APIPlayer> jugadores, Rol rol) {
         var listaPersonajes = new List<Personaje>();
 
         double tiro, creacion, defensaPerimetro, defensaInterior, promedio;
@@ -189,6 +192,7 @@ public static class Ejecucion
 
         public static List<Equipo> CrearEquipos(List<Personaje> capitanes, List<Personaje> atacantes, List<Personaje> defensores, List<Teams> equiposAPI) {
 
+            // inicializo una lista de instancias tipo Equipo con una capacidad inicial de 8 elementos
             var equipos = new List<Equipo>(8){
                 ElegirEquipo(capitanes, atacantes, defensores)
             };
@@ -218,7 +222,9 @@ public static class Ejecucion
         }
         
         private static Equipo ElegirEquipo(List<Personaje> capitanes, List<Personaje> atacantes, List<Personaje> defensores) {
-            var equipoUsuario = new Equipo();
+            var capitan = new Personaje();
+            var atacante = new Personaje();
+            var defensor = new Personaje();
             int opcion; bool b = true;
 
             Console.WriteLine("\tSELECCIONAR CAPITAN");
@@ -234,7 +240,7 @@ public static class Ejecucion
                 }
                 
             } while (!b);
-            equipoUsuario.Capitan = capitanes.ElementAt(opcion-1);
+            capitan = capitanes.ElementAt(opcion-1);
 
             Console.WriteLine("\tSELECCIONAR ATACANTE");
             mostrarPersonajes(atacantes);
@@ -249,7 +255,7 @@ public static class Ejecucion
                 }
                 
             } while (!b);
-            equipoUsuario.Atacante = atacantes.ElementAt(opcion-1);
+            atacante = atacantes.ElementAt(opcion-1);
 
             Console.WriteLine("\tSELECCIONAR DEFENSORES");
             mostrarPersonajes(defensores);
@@ -264,7 +270,13 @@ public static class Ejecucion
                 }
                 
             } while (!b);
-            equipoUsuario.Defensor = defensores.ElementAt(opcion-1);
+            defensor = defensores.ElementAt(opcion-1);
+
+            var equipoUsuario = new Equipo(
+                capitan,
+                atacante,
+                defensor
+            );
 
             return equipoUsuario;
         }
@@ -297,7 +309,7 @@ public static class Ejecucion
                 
                 Console.WriteLine("\nSeleccion: ");
                 b = int.TryParse(Console.ReadLine(), out opcion);
-                if (opcion < 1 || opcion > 8 || !b) {
+                if (opcion < 1 || opcion > 30 || !b) {
                     Console.WriteLine("Opcion no valida, ingresar nuevamente");
                     b = false;
                 }
@@ -307,6 +319,7 @@ public static class Ejecucion
             return equipos[opcion-1];
         }
 
+        // se puede optimizar la funcion eliminando la variable equipoUsuario y pasando equipos[0] como referencia a la funcion ElegirNombreEquipo
         private static void AsignarNombreEquipos(List<Equipo> equipos, List<Teams> equiposAPI) {
 
             var equipoUsuario = ElegirNombreEquipo(equiposAPI);
@@ -359,7 +372,31 @@ public static class Ejecucion
         private static int RealizarAtaque(Equipo equipoAtacante, Equipo equipoDefensor) {
             
             var tipoDeAtaque = DeterminarTipoDeAtaque();
+            var tipoDeDefensa = DeterminarTipoDeDefensa(tipoDeAtaque, equipoDefensor);
+            double probabilidadDeDefensa, probabilidadDeConversion;
 
+            if (EsFalta(tipoDeDefensa, equipoDefensor)) {
+
+                // TIRAR FALTA
+
+            } else
+            {
+                probabilidadDeDefensa = ObtenerProbabilidadDeDefensa(tipoDeAtaque, tipoDeDefensa, equipoDefensor);
+                if (CalcularExitoDeDefensa((int)Math.Floor(probabilidadDeDefensa)))
+                    return 0;   // DEFENSA EXITOSA
+                else
+                {
+                    probabilidadDeConversion = ObtenerProbabilidadDeConversion(tipoDeAtaque, equipoAtacante);
+                    if (CalcularExitoDeConversion((int)Math.Floor(probabilidadDeConversion)))
+                    {
+                        if (tipoDeAtaque == TipoDeAtaque.Triple)
+                            return 3;
+                        else
+                            return 2;
+                    } else
+                        return 0;   // TIRO FALLADO, DISPUTA DE REBOTE
+                }
+            }
 
         }
 
@@ -369,78 +406,149 @@ public static class Ejecucion
             int opcion = random.Next(100);
             if (opcion < 50)
                 return TipoDeAtaque.Bandeja;
-            if (opcion <= 50)
+            if (opcion >= 50 && opcion < 80)
                 return TipoDeAtaque.Dunk;
-            if (opcion <= 80)
-                return TipoDeAtaque.Triple;
             else
-                return TipoDeAtaque.Bandeja;        // NO TODOS LOS CAMINOS DEVUELVEN UN VALOR
+                return TipoDeAtaque.Triple;
+
         }
 
-        private static TipoDeDefensa? DeterminarTipoDeDefensa(TipoDeAtaque tipoDeAtaque, Equipo equipoDefensor) {
+        private static TipoDeDefensa DeterminarTipoDeDefensa(TipoDeAtaque tipoDeAtaque, Equipo equipoDefensor) {
             
-            var random = new Random(Guid.NewGuid().GetHashCode());
+            var random = new Random();
             int opcion = random.Next(100);
-            TipoDeDefensa tipoDeDefensa = TipoDeDefensa.Fallida;
 
             if (tipoDeAtaque == TipoDeAtaque.Bandeja)
             {
-                if (opcion < 25)
-                    tipoDeDefensa = TipoDeDefensa.Bloqueo;
-                if (opcion >= 25 && opcion < 40)
-                    tipoDeDefensa = TipoDeDefensa.Robo;
-            }
-            if (tipoDeAtaque == TipoDeAtaque.Dunk)
+                if (opcion < 75)
+                    return TipoDeDefensa.Bloqueo;
+                else
+                    return TipoDeDefensa.Robo;
+            } else if (tipoDeAtaque == TipoDeAtaque.Dunk)
             {
-                if (opcion < 20)
-                    tipoDeDefensa = TipoDeDefensa.Bloqueo;
-                if (opcion >= 20 && opcion < 30)
-                    tipoDeDefensa = TipoDeDefensa.Robo;
-            }
-            if (tipoDeAtaque == TipoDeAtaque.Triple)
+                if (opcion < 70)
+                    return TipoDeDefensa.Bloqueo;
+                else
+                    return TipoDeDefensa.Robo;
+            } else /* if (tipoDeAtaque == TipoDeAtaque.Triple) */
             {
-                if (opcion < 10)
-                    tipoDeDefensa = TipoDeDefensa.Bloqueo;
-                if (opcion >= 10 && opcion < 15)
-                    tipoDeDefensa = TipoDeDefensa.Robo;
-            }
-
-            if (tipoDeDefensa == TipoDeDefensa.Fallida)
-            {
-                
+                if (opcion < 60)
+                    return TipoDeDefensa.Bloqueo;
+                else
+                    return TipoDeDefensa.Robo;
             }
 
         }
 
-        private static bool DeterminarFalta(TipoDeDefensa tipoDeDefensa, Equipo equipoDefensor) {
+        private static bool EsFalta(TipoDeDefensa tipoDeDefensa, Equipo equipoDefensor) {
 
-            poner en todos las inicializaciones de random "Guid.NewGuid().GetHashCode()";
+            var random = new Random();
+            double opcion = random.Next(100);
 
+            if (tipoDeDefensa == TipoDeDefensa.Bloqueo) {
+                if (opcion < (15 - 0.2 * (equipoDefensor.Estadisticas.DefensaPerimetro + equipoDefensor.Estadisticas.DefensaInterior)))
+                    return true;
+                else
+                    return false;
+            }
+            if (tipoDeDefensa == TipoDeDefensa.Robo) {
+                if (opcion < (10 - 0.2 * (equipoDefensor.Estadisticas.DefensaPerimetro + equipoDefensor.Estadisticas.DefensaInterior)))
+                    return true;
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+
+        private static double ObtenerProbabilidadDeDefensa(TipoDeAtaque tipoDeAtaque, TipoDeDefensa tipoDeDefensa, Equipo equipoDefensor) {
+
+            var random = new Random();
+            int factorSuerte = random.Next(-3, 3);
+            double bonusEstadisticas = ObtenerBonusEstadisticasDefensa(tipoDeDefensa, equipoDefensor);
+
+            if (tipoDeAtaque == TipoDeAtaque.Bandeja)
+            {
+                if (tipoDeDefensa == TipoDeDefensa.Bloqueo)
+                    return 25 + bonusEstadisticas + factorSuerte;
+                else
+                    return 15 + bonusEstadisticas + factorSuerte;
+            }
+            if (tipoDeAtaque == TipoDeAtaque.Dunk)
+            {
+                if (tipoDeDefensa == TipoDeDefensa.Bloqueo)
+                    return 20 + bonusEstadisticas + factorSuerte;
+                else
+                    return 10 + bonusEstadisticas + factorSuerte;
+            }
+            else /* if (tipoDeAtaque == TipoDeAtaque.Triple) */
+            {
+                if (tipoDeDefensa == TipoDeDefensa.Bloqueo)
+                    return 10 + bonusEstadisticas + factorSuerte;
+                else
+                    return 5 + bonusEstadisticas + factorSuerte;
+            }
+
+        }
+
+        private static double ObtenerBonusEstadisticasDefensa(TipoDeDefensa tipoDeDefensa, Equipo equipoDefensor) {
+
+            double bonusEstadisticas;
+
+            if (tipoDeDefensa == TipoDeDefensa.Bloqueo)
+                    bonusEstadisticas = 0.2 * (equipoDefensor.Estadisticas.DefensaPerimetro + equipoDefensor.Estadisticas.DefensaInterior);
+            else /* if (tipoDeDefensa == TipoDeDefensa.Robo) */
+                bonusEstadisticas = 0.4 * equipoDefensor.Estadisticas.DefensaPerimetro;
+            
+            return bonusEstadisticas;
+
+        }
+
+        private static bool CalcularExitoDeDefensa (int probabilidadDeDefensa) {
+
+            var random = new Random();
+            var opcion = random.Next(100);
+
+            if (opcion < probabilidadDeDefensa)
+                return true;
+            else
+                return false;
+            
         }
 
         private static double ObtenerProbabilidadDeConversion(TipoDeAtaque tipoDeAtaque, Equipo equipoAtacante) {
 
-            double tiroEquipo = (equipoAtacante.Capitan.Estadisticas.Tiro + equipoAtacante.Atacante.Estadisticas.Tiro + equipoAtacante.Defensor.Estadisticas.Tiro) / 3;
-            double creacionEquipo = (equipoAtacante.Capitan.Estadisticas.Creacion + equipoAtacante.Atacante.Estadisticas.Creacion + equipoAtacante.Defensor.Estadisticas.Creacion) / 3;
             var random = new Random();
             int factorSuerte = random.Next(-5, 5);
             double bonusEstadisticas;
 
             if (tipoDeAtaque == TipoDeAtaque.Bandeja)
             {
-                bonusEstadisticas = 0.7 * creacionEquipo + 0.3 * tiroEquipo;
+                bonusEstadisticas = 0.7 * equipoAtacante.Estadisticas.Creacion + 0.3 * equipoAtacante.Estadisticas.Tiro;
                 return 60 + bonusEstadisticas + factorSuerte;
             }
             if (tipoDeAtaque == TipoDeAtaque.Dunk)
             {
-                bonusEstadisticas = 0.7 * creacionEquipo + 0.3 * tiroEquipo;
+                bonusEstadisticas = 0.7 * equipoAtacante.Estadisticas.Creacion + 0.3 * equipoAtacante.Estadisticas.Tiro;
                 return 40 + bonusEstadisticas + factorSuerte;
             }
-            else
+            else /* if (tipoDeAtaque == TipoDeAtaque.Triple) */
             {
-                bonusEstadisticas = 0.3 * creacionEquipo + 0.7 * tiroEquipo;
+                bonusEstadisticas = 0.3 * equipoAtacante.Estadisticas.Creacion + 0.7 * equipoAtacante.Estadisticas.Tiro;
                 return 30 + bonusEstadisticas + factorSuerte;
             }
+
+        }
+
+        private static bool CalcularExitoDeConversion(int probabilidadDeConversion) {
+
+            var random = new Random();
+            var opcion = random.Next(100);
+
+            if (opcion < probabilidadDeConversion)
+                return true;
+            else
+                return false;
 
         }
 

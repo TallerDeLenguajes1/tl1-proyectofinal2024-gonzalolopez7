@@ -1,30 +1,30 @@
 using System.Text.Json.Serialization;
 
-public class PlayerData
+public class APIPlayerData
 {
-    List<Player> listaJugadores;
+    List<APIPlayer> listaJugadores;
 
     [JsonPropertyName("data")]
-    public List<Player> playerList { get => listaJugadores; set => listaJugadores = value; }
+    public List<APIPlayer> playerList { get => listaJugadores; set => listaJugadores = value; }
 }
 
-public class StatsData
+public class APIStatsData
 {
-    List<Stats> listaStats;
+    List<APIStats> listaStats;
 
     [JsonPropertyName("data")]
-    public List<Stats> statList { get => listaStats; set => listaStats = value; }
+    public List<APIStats> statList { get => listaStats; set => listaStats = value; }
 }
 
-public class Player
+public class APIPlayer
 { 
     int id;
     string firstName;
     string lastName;
     int jerseyNumber;
     string country;
-    Team team;
-    Stats stats;
+    APITeam team;
+    APIStats stats;
 
     [JsonPropertyName("id")]
     public int Id { get => id; set => id = value; }
@@ -42,13 +42,13 @@ public class Player
     public string Country { get => country; set => country = value; }
 
     [JsonPropertyName("team")]
-    public Team Team { get => team; set => team = value; }
+    public APITeam Team { get => team; set => team = value; }
 
     [JsonPropertyName("stats")]
-    public Stats Stats { get => stats; set => stats = value; }
+    public APIStats Stats { get => stats; set => stats = value; }
 }
 
-public class Team
+public class APITeam
 {
     string fullName;
     string abbreviation;
@@ -60,7 +60,7 @@ public class Team
     public string Abbreviation { get => abbreviation; set => abbreviation = value; }
 }
 
-public class Stats
+public class APIStats
 {
     int id;
     double fg;
