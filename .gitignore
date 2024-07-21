@@ -13,6 +13,10 @@ IDEAS.md
 capitanes.json
 atacantes.json
 defensores.json
+capitanesOffline.json
+atacantesOffline.json
+defensoresOffline.json
+equiposOffline.json
 
 # User-specific files
 *.rsuser

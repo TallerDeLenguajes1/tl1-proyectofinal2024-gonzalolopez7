@@ -68,7 +68,7 @@ public static class ConsumirAPI
         return url;
     }
 
-    private static string ObtenerURLEstadisticas(List<APIPlayer> listaJugadores, int season)
+    private static string ObtenerURLEstadisticas(List<APIPlayers> listaJugadores, int season)
     {
         string url = $"https://api.balldontlie.io/v1/season_averages?season={season}&";
 
@@ -84,7 +84,7 @@ public static class ConsumirAPI
         return url;
     }
 
-    public static async Task<List<APIPlayer>> ObtenerListaJugadores(Rol rol)
+    public static async Task<List<APIPlayers>> ObtenerListaJugadores(Rol rol)
     {
         var diccionarioJugadores = ConsumirAPI.obtenerDiccionarioJugadores();
         string urlPlayers = ConsumirAPI.ObtenerURLJugadores(diccionarioJugadores, rol);
@@ -96,8 +96,8 @@ public static class ConsumirAPI
         HttpResponseMessage response = await client.GetAsync(urlPlayers);
         response.EnsureSuccessStatusCode();
 
-        APIPlayerData playersResponseBody = await response.Content.ReadFromJsonAsync<APIPlayerData>();
-        List<APIPlayer> playerList = playersResponseBody.playerList;
+        APIPlayersData playersResponseBody = await response.Content.ReadFromJsonAsync<APIPlayersData>();
+        List<APIPlayers> playerList = playersResponseBody.playerList;
 
         string urlStats = ConsumirAPI.ObtenerURLEstadisticas(playerList, 2023);
 
@@ -115,7 +115,7 @@ public static class ConsumirAPI
         return playerList;
     }
 
-    public static async Task<List<Teams>> ObtenerEquipos() {
+    public static async Task<List<APITeams>> ObtenerEquipos() {
         string urlTeams = "https://api.balldontlie.io/v1/teams";
         string apiKey = "d464875f-8435-459e-9caa-4cbd46861aed";
 
@@ -125,8 +125,8 @@ public static class ConsumirAPI
         HttpResponseMessage response = await client.GetAsync(urlTeams);
         response.EnsureSuccessStatusCode();
 
-        TeamsData teamsResponseBody = await response.Content.ReadFromJsonAsync<TeamsData>();
-        List<Teams> teamsList = teamsResponseBody.TeamsList;
+        APITeamsData teamsResponseBody = await response.Content.ReadFromJsonAsync<APITeamsData>();
+        List<APITeams> teamsList = teamsResponseBody.TeamsList;
 
         return teamsList;
     }

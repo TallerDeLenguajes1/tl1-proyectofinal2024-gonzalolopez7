@@ -16,11 +16,12 @@ public class Equipo
         this.capitan = capitan;
         this.atacante = atacante;
         this.defensor = defensor;
-        estadisticas.Tiro = (capitan.Estadisticas.Tiro + atacante.Estadisticas.Tiro + defensor.Estadisticas.Tiro) / 3;
-        estadisticas.Creacion = (capitan.Estadisticas.Creacion + atacante.Estadisticas.Creacion + defensor.Estadisticas.Creacion) / 3;
-        estadisticas.DefensaPerimetro = (capitan.Estadisticas.DefensaPerimetro + atacante.Estadisticas.DefensaPerimetro + defensor.Estadisticas.DefensaPerimetro) / 3;
-        estadisticas.DefensaInterior = (capitan.Estadisticas.DefensaInterior + atacante.Estadisticas.DefensaInterior + defensor.Estadisticas.DefensaInterior) / 3;
-        estadisticas.Promedio = (capitan.Estadisticas.Promedio + atacante.Estadisticas.Promedio + defensor.Estadisticas.Promedio) / 3;;
+        estadisticas = new Estadisticas();
+        estadisticas.Tiro = Math.Round((capitan.Estadisticas.Tiro + atacante.Estadisticas.Tiro + defensor.Estadisticas.Tiro) / 3, 1);
+        estadisticas.Creacion = Math.Round((capitan.Estadisticas.Creacion + atacante.Estadisticas.Creacion + defensor.Estadisticas.Creacion) / 3, 1);
+        estadisticas.DefensaPerimetro = Math.Round((capitan.Estadisticas.DefensaPerimetro + atacante.Estadisticas.DefensaPerimetro + defensor.Estadisticas.DefensaPerimetro) / 3, 1);
+        estadisticas.DefensaInterior = Math.Round((capitan.Estadisticas.DefensaInterior + atacante.Estadisticas.DefensaInterior + defensor.Estadisticas.DefensaInterior) / 3, 1);
+        estadisticas.Promedio = Math.Round((capitan.Estadisticas.Promedio + atacante.Estadisticas.Promedio + defensor.Estadisticas.Promedio) / 3, 1);
     }
 
     public string Nombre { get => nombre; set => nombre = value; }

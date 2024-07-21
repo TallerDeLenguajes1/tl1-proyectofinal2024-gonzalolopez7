@@ -67,6 +67,10 @@ public class Estadisticas
     double defensaInterior;
     double promedio;
 
+    public Estadisticas(){
+
+    }
+
     public Estadisticas(double tiro, double creacion, double defensaPerimetro, double defensaInterior, double promedio)
     {
         this.tiro = tiro;

@@ -1,10 +1,7 @@
-using System.Reflection.Emit;
-using System.Reflection.Metadata.Ecma335;
-
 public static class Ejecucion
 {
     
-    public static List<Personaje> CrearPersonajes(List<APIPlayer> jugadores, Rol rol) {
+    public static List<Personaje> CrearPersonajes(List<APIPlayers> jugadores, Rol rol) {
         var listaPersonajes = new List<Personaje>();
 
         double tiro, creacion, defensaPerimetro, defensaInterior, promedio;
@@ -190,7 +187,7 @@ public static class Ejecucion
     public static class Equipos
     {
 
-        public static List<Equipo> CrearEquipos(List<Personaje> capitanes, List<Personaje> atacantes, List<Personaje> defensores, List<Teams> equiposAPI) {
+        public static List<Equipo> CrearEquipos(List<Personaje> capitanes, List<Personaje> atacantes, List<Personaje> defensores, List<APITeams> equiposAPI) {
 
             // inicializo una lista de instancias tipo Equipo con una capacidad inicial de 8 elementos
             var equipos = new List<Equipo>(8){
@@ -298,7 +295,7 @@ public static class Ejecucion
 
         }
 
-        private static Teams ElegirNombreEquipo(List<Teams> equipos) {
+        private static APITeams ElegirNombreEquipo(List<APITeams> equipos) {
             int opcion; bool b = true;
 
             for (int i = 0; i < equipos.Count(); i++)
@@ -320,7 +317,7 @@ public static class Ejecucion
         }
 
         // se puede optimizar la funcion eliminando la variable equipoUsuario y pasando equipos[0] como referencia a la funcion ElegirNombreEquipo
-        private static void AsignarNombreEquipos(List<Equipo> equipos, List<Teams> equiposAPI) {
+        private static void AsignarNombreEquipos(List<Equipo> equipos, List<APITeams> equiposAPI) {
 
             var equipoUsuario = ElegirNombreEquipo(equiposAPI);
             equipos[0].Nombre = equipoUsuario.Fullname;
@@ -355,46 +352,265 @@ public static class Ejecucion
             int ptosVisitante;
             Equipo ganador;
 
+            public Partido(Equipo local, Equipo visitante, FasePartido fase)
+            {
+                this.local = local;
+                this.visitante = visitante;
+                this.fase = fase;
+                ptosLocal = 0;
+                ptosVisitante = 0;
+            }
+
             public Equipo Local { get => local; set => local = value; }
             public Equipo Visitante { get => visitante; set => visitante = value; }
             public int PtosLocal { get => ptosLocal; }
             public int PtosVisitante { get => ptosVisitante; }
-            private FasePartido Fase { get => fase; }
+            public FasePartido Fase { get => fase; }
+            public Equipo Ganador { get => ganador; }
 
             public void JugarPartido() {
 
+                JugarTiempoRegular();
+                if (ptosLocal > ptosVisitante)
+                    ganador = local;
+                if (ptosLocal < ptosVisitante)
+                    ganador = visitante;
+                else 
+                {
+                    int i = 1;
+                    do
+                    {
+                        JugarTiempoExtra(i);
+                        if (ganador != local && ganador !=  visitante)
+                            i++;
+                    } while (ganador == local || ganador == visitante);
 
+                }
+
+                Console.WriteLine($"GANADOR: {ganador.Nombre} ({ganador.Abreviacion}) ");
+
+            }
+ 
+            public void SimularPartido() {
+
+                SimularTiempoRegular();
+                if (ptosLocal > ptosVisitante)
+                    ganador = local;
+                if (ptosLocal < ptosVisitante)
+                    ganador = visitante;
+                else 
+                {
+                    int i = 1;
+                    do
+                    {
+                        SimularTiempoExtra(i);
+                        if (ganador != local && ganador !=  visitante)
+                            i++;
+                    } while (ganador == local || ganador == visitante);
+
+                }
+
+            }
+
+            private void JugarTiempoRegular() {
+
+                Console.WriteLine("\n");
+                Console.WriteLine("INICIO DE PARTIDO");
+                Console.WriteLine($"LOCAL: {local.Nombre} ({local.Abreviacion}) - VISITANTE: {visitante.Nombre} ({visitante.Abreviacion})");
+                Console.WriteLine("presionar cualquier tecla para comenzar el partido..."); Console.ReadKey();
+                for (int i = 1; i <= 4; i++)
+                {
+                    Console.WriteLine("\n");
+                    Console.WriteLine($"INICIO {i}/4 CUARTO");
+                    for (int j = 1; j <= 10; j+=2)
+                    {
+                        Console.WriteLine("\n");
+                        Console.WriteLine($"ATAQUE {j}:");
+                        ptosLocal += RealizarAtaque(local, visitante, false);
+                        Console.WriteLine("\n");
+                        Console.WriteLine($"ATAQUE {j+1}:");
+                        ptosVisitante += RealizarAtaque(visitante, local, false);
+                    }
+                    Console.WriteLine("\n");
+                    if (i != 4)
+                    {
+                        Console.WriteLine($"FIN DE {i}/4 CUARTO");
+                        Console.WriteLine($"LOCAL: {ptosLocal} - VISITANTE: {ptosVisitante}");
+                        Console.WriteLine("presionar cualquier tecla para comenzar el proximo cuarto..."); Console.ReadKey();
+                    }
+                    else
+                    {
+                        Console.WriteLine("FIN DEL PARTIDO");
+                        Console.WriteLine($"LOCAL: {ptosLocal} - VISITANTE: {ptosVisitante}");
+                    }
+
+                }
+
+            }
+
+            private void SimularTiempoRegular() {
+
+                for (int i = 1; i <= 4; i++)
+                {
+                    for (int j = 1; j <= 10; j+=2)
+                    {
+                        ptosLocal += SimularAtaque(local, visitante, false);
+                        ptosVisitante += SimularAtaque(visitante, local, false);
+                    }
+                }
+
+                if (ptosLocal > ptosVisitante)
+                    ganador = local;
+                else
+                    ganador = visitante;
+                
+            }
+
+            private void JugarTiempoExtra(int i) {
+
+                Console.WriteLine("\n");
+                Console.WriteLine($"INICIO DE TIEMPO EXTRA {i}");
+                for (int j = 1; j <= 10; j+=2)
+                {
+                    Console.WriteLine("\n");
+                    Console.WriteLine($"ATAQUE {j}:");
+                    ptosLocal += RealizarAtaque(local, visitante, false);
+                    Console.WriteLine("\n");
+                    Console.WriteLine($"ATAQUE {j+1}:");
+                    ptosVisitante += RealizarAtaque(visitante, local, false);
+                }
+
+            }
+
+            private void SimularTiempoExtra(int i) {
+
+                for (int j = 1; j <= 10; j+=2)
+                {
+                    ptosLocal += RealizarAtaque(local, visitante, false);
+                    ptosVisitante += RealizarAtaque(visitante, local, false);
+                }
 
             }
 
         }
 
-        private static int RealizarAtaque(Equipo equipoAtacante, Equipo equipoDefensor) {
-            
+        private static int RealizarAtaque(Equipo equipoAtacante, Equipo equipoDefensor, bool ataquePostRebote) {
+
+            Console.WriteLine($"{equipoAtacante.Abreviacion} atacando, {equipoDefensor.Abreviacion} defendiendo");
+            Console.WriteLine("\n");
+
             var tipoDeAtaque = DeterminarTipoDeAtaque();
-            var tipoDeDefensa = DeterminarTipoDeDefensa(tipoDeAtaque, equipoDefensor);
+            var tipoDeDefensa = DeterminarTipoDeDefensa(tipoDeAtaque);
             double probabilidadDeDefensa, probabilidadDeConversion;
 
             if (EsFalta(tipoDeDefensa, equipoDefensor)) {
 
-                // TIRAR FALTA
+                Console.WriteLine($"Falta de {equipoDefensor.Abreviacion}, Tiro libre para {equipoAtacante.Abreviacion}");
+                if (CalcularExitoTiroLibre(equipoAtacante))
+                {
+                    Console.WriteLine("Tiro libre convertido");
+                    return 1; // TIRO LIBRE CONVERTIDO
+                }
+                else
+                {
+                    Console.WriteLine("Tiro libre fallado");
+                    return 0; // TIRO LIBRE FALLADO
+                }
+                
 
             } else
             {
                 probabilidadDeDefensa = ObtenerProbabilidadDeDefensa(tipoDeAtaque, tipoDeDefensa, equipoDefensor);
-                if (CalcularExitoDeDefensa((int)Math.Floor(probabilidadDeDefensa)))
-                    return 0;   // DEFENSA EXITOSA
+                if (CalcularExitoDefensa((int)Math.Floor(probabilidadDeDefensa)))
+                {
+                    Console.WriteLine($"Defensa exitosa de {equipoDefensor.Abreviacion}");
+                    return 0; // ATAQUE DEFENDIDO
+                }
                 else
                 {
-                    probabilidadDeConversion = ObtenerProbabilidadDeConversion(tipoDeAtaque, equipoAtacante);
-                    if (CalcularExitoDeConversion((int)Math.Floor(probabilidadDeConversion)))
+                    probabilidadDeConversion = ObtenerProbabilidadDeConversion(tipoDeAtaque, equipoAtacante, ataquePostRebote);
+                    if (CalcularExitoConversion((int)Math.Floor(probabilidadDeConversion)))
                     {
                         if (tipoDeAtaque == TipoDeAtaque.Triple)
-                            return 3;
+                        {
+                            Console.WriteLine($"Triple convertido de {equipoAtacante.Abreviacion}");
+                            return 3; // TRIPLE CONVERTIDO
+                        }
                         else
-                            return 2;
+                        {
+                            Console.WriteLine($"Doble convertido de {equipoAtacante.Abreviacion}");
+                            return 2; // BANDEJA O DUNK CONVERTIDO
+                        }
                     } else
-                        return 0;   // TIRO FALLADO, DISPUTA DE REBOTE
+                    {
+                        Console.WriteLine($"Tiro fallado de {equipoAtacante.Abreviacion}");
+                        if (DisputarRebote() && !ataquePostRebote)  // SE DISPUTA EL REBOTE UNA SOLA VEZ POR POSESION
+                        {
+                            Console.WriteLine($"Rebote ganado por {equipoDefensor.Abreviacion}");
+                            return 0; // TIRO FALLADO
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Rebote ganado por {equipoAtacante.Abreviacion}");
+                            return RealizarAtaque(equipoAtacante, equipoDefensor, true);
+                        }
+                    }
+
+                }
+            }
+
+        }
+
+        private static int SimularAtaque(Equipo equipoAtacante, Equipo equipoDefensor, bool ataquePostRebote) {
+
+            var tipoDeAtaque = DeterminarTipoDeAtaque();
+            var tipoDeDefensa = DeterminarTipoDeDefensa(tipoDeAtaque);
+            double probabilidadDeDefensa, probabilidadDeConversion;
+
+            if (EsFalta(tipoDeDefensa, equipoDefensor)) {
+
+                if (CalcularExitoTiroLibre(equipoAtacante))
+                {
+                    return 1; // TIRO LIBRE CONVERTIDO
+                }
+                else
+                {
+                    return 0; // TIRO LIBRE FALLADO
+                }
+                
+
+            } else
+            {
+                probabilidadDeDefensa = ObtenerProbabilidadDeDefensa(tipoDeAtaque, tipoDeDefensa, equipoDefensor);
+                if (CalcularExitoDefensa((int)Math.Floor(probabilidadDeDefensa)))
+                {
+                    return 0; // ATAQUE DEFENDIDO
+                }
+                else
+                {
+                    probabilidadDeConversion = ObtenerProbabilidadDeConversion(tipoDeAtaque, equipoAtacante, ataquePostRebote);
+                    if (CalcularExitoConversion((int)Math.Floor(probabilidadDeConversion)))
+                    {
+                        if (tipoDeAtaque == TipoDeAtaque.Triple)
+                        {
+                            return 3; // TRIPLE CONVERTIDO
+                        }
+                        else
+                        {
+                            return 2; // BANDEJA O DUNK CONVERTIDO
+                        }
+                    } else
+                    {
+                        if (DisputarRebote() && !ataquePostRebote)  // SE DISPUTA EL REBOTE UNA SOLA VEZ POR POSESION
+                        {
+                            return 0; // TIRO FALLADO
+                        }
+                        else
+                        {
+                            return SimularAtaque(equipoAtacante, equipoDefensor, true);
+                        }
+                    }
+
                 }
             }
 
@@ -413,7 +629,7 @@ public static class Ejecucion
 
         }
 
-        private static TipoDeDefensa DeterminarTipoDeDefensa(TipoDeAtaque tipoDeAtaque, Equipo equipoDefensor) {
+        private static TipoDeDefensa DeterminarTipoDeDefensa(TipoDeAtaque tipoDeAtaque) {
             
             var random = new Random();
             int opcion = random.Next(100);
@@ -504,7 +720,7 @@ public static class Ejecucion
 
         }
 
-        private static bool CalcularExitoDeDefensa (int probabilidadDeDefensa) {
+        private static bool CalcularExitoDefensa (int probabilidadDeDefensa) {
 
             var random = new Random();
             var opcion = random.Next(100);
@@ -516,31 +732,37 @@ public static class Ejecucion
             
         }
 
-        private static double ObtenerProbabilidadDeConversion(TipoDeAtaque tipoDeAtaque, Equipo equipoAtacante) {
+        private static double ObtenerProbabilidadDeConversion(TipoDeAtaque tipoDeAtaque, Equipo equipoAtacante, bool ataquePostRebote) {
 
             var random = new Random();
             int factorSuerte = random.Next(-5, 5);
             double bonusEstadisticas;
+            int modificacionPostRebote;
+
+            if (ataquePostRebote)
+                modificacionPostRebote = 30;
+            else
+                modificacionPostRebote = 0;
 
             if (tipoDeAtaque == TipoDeAtaque.Bandeja)
             {
-                bonusEstadisticas = 0.7 * equipoAtacante.Estadisticas.Creacion + 0.3 * equipoAtacante.Estadisticas.Tiro;
+                bonusEstadisticas = 0.7 * equipoAtacante.Estadisticas.Creacion + 0.3 * equipoAtacante.Estadisticas.Tiro - modificacionPostRebote;
                 return 60 + bonusEstadisticas + factorSuerte;
             }
             if (tipoDeAtaque == TipoDeAtaque.Dunk)
             {
-                bonusEstadisticas = 0.7 * equipoAtacante.Estadisticas.Creacion + 0.3 * equipoAtacante.Estadisticas.Tiro;
+                bonusEstadisticas = 0.7 * equipoAtacante.Estadisticas.Creacion + 0.3 * equipoAtacante.Estadisticas.Tiro - modificacionPostRebote;
                 return 40 + bonusEstadisticas + factorSuerte;
             }
             else /* if (tipoDeAtaque == TipoDeAtaque.Triple) */
             {
-                bonusEstadisticas = 0.3 * equipoAtacante.Estadisticas.Creacion + 0.7 * equipoAtacante.Estadisticas.Tiro;
+                bonusEstadisticas = 0.3 * equipoAtacante.Estadisticas.Creacion + 0.7 * equipoAtacante.Estadisticas.Tiro - modificacionPostRebote;
                 return 30 + bonusEstadisticas + factorSuerte;
             }
 
         }
 
-        private static bool CalcularExitoDeConversion(int probabilidadDeConversion) {
+        private static bool CalcularExitoConversion(int probabilidadDeConversion) {
 
             var random = new Random();
             var opcion = random.Next(100);
@@ -552,27 +774,62 @@ public static class Ejecucion
 
         }
 
+        private static bool CalcularExitoTiroLibre(Equipo equipoAtacante) {
+
+            int probabilidadDeConversionTiroLibre = ObtenerProbabilidadDeConversionTiroLibre(equipoAtacante);
+
+            var random = new Random();
+            int opcion = random.Next(100);
+
+            if (opcion < probabilidadDeConversionTiroLibre)
+                return true;
+            else
+                return false;
+
+        }
+
+        private static int ObtenerProbabilidadDeConversionTiroLibre(Equipo equipoAtacante) {
+
+            var random = new Random();
+            int factorSuerte = random.Next(-5, 5);
+
+            return 75 + (int)Math.Floor(equipoAtacante.Estadisticas.Tiro) + factorSuerte;
+        }
+
+        private static bool DisputarRebote() {
+
+            var random = new Random();
+            int opcion = random.Next(100);
+
+            if (opcion < 70)
+                return true; // EQUIPO DEFENSOR GANA EL REBOTE
+            else
+                return false; // EQUIPO ATACANTE GANA EL REBOTE
+
+        }
+
     }
 
-    private enum TipoDeAtaque 
+}
+    
+public enum TipoDeAtaque 
     {
         Bandeja,
         Dunk,
         Triple
     }
 
-    private enum TipoDeDefensa
+public enum TipoDeDefensa
     {
         Bloqueo,
         Robo,
         Falta,
         Fallida
     }
-}
 
-enum FasePartido
-        {
-            CuartoDeFinal,
-            Semifinal,
-            Final
-        }
+public enum FasePartido
+    {
+        CuartoDeFinal,
+        Semifinal,
+        Final
+    }

@@ -1,15 +1,15 @@
 
 using System.Text.Json.Serialization;
 
-public class TeamsData {
+public class APITeamsData {
 
-    List<Teams> teamsList;
+    List<APITeams> teamsList;
 
     [JsonPropertyName("data")]
-    public List<Teams> TeamsList { get => teamsList; set => teamsList = value; }
+    public List<APITeams> TeamsList { get => teamsList; set => teamsList = value; }
 }
 
-public class Teams
+public class APITeams
 {
     
     string full_name;
