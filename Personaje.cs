@@ -21,7 +21,6 @@ public class Datos
 {
     int id;
     string nombre;
-    string apellido;
     int numero;
     string nacionalidad;
     DatosEquipo equipo;
@@ -29,8 +28,7 @@ public class Datos
     public Datos(int id, string nombre, string apellido, int numero, string nacionalidad, DatosEquipo equipo)
     {
         this.id = id;
-        this.nombre = nombre;
-        this.apellido = apellido;
+        this.nombre = nombre + " " + apellido;
         this.numero = numero;
         this.nacionalidad = nacionalidad;
         this.equipo = equipo;
@@ -38,7 +36,6 @@ public class Datos
 
     public int Id { get => id; set => id = value; }
     public string Nombre { get => nombre; set => nombre = value; }
-    public string Apellido { get => apellido; set => apellido = value; }
     public int Numero { get => numero; set => numero = value; }
     public string Nacionalidad { get => nacionalidad; set => nacionalidad = value; }
     public DatosEquipo Equipo { get => equipo; set => equipo = value; }

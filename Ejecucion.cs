@@ -154,37 +154,237 @@ public static class Ejecucion
         return listaPersonajes;
     }
 
-    public static class Menus
+    public static class Menu
     {
         
-        public static void Inicio() {
+        public static void NombreJuego() {
 
-            Console.WriteLine("NOMBRE JUEGO");
+            Console.Title = "NBA API";
+            Console.WriteLine("\n");
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~   ~~  ~~      ~~~~     ~~~~~~     ~~~      ~~~       ~~");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("~~    ~  ~~  ~~~  ~~       ~~~~       ~~  ~~~  ~~~~   ~~~~");
+            Console.WriteLine("~~       ~~      ~~~  ~~~  ~~~~  ~~~  ~~      ~~~~~   ~~~~");
+            Console.WriteLine("~~  ~    ~~  ~~~  ~~       ~~~~       ~~  ~~~~~~~~~   ~~~~");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("~~  ~~   ~~      ~~~  ~~~  ~~~~  ~~~  ~~  ~~~~~~~       ~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.ForegroundColor = ConsoleColor.Gray;
+
 
         }
 
-        public static int MenuInicio() {
-            int opcion; bool b = true;
+        public static void Inicio(List<Equipo> listaEquipos) {
+            int opcion; bool b;
+            
+            Console.WriteLine("\n~~~~ MENU ~~~~");
+            Console.WriteLine("1. Comenzar partida");
+            Console.WriteLine("2. Mostrar lista de equipos");
 
             do
             {
-                
-                Console.WriteLine("1. Comenzar juego");
-                Console.WriteLine("2. Salir");
+                Console.WriteLine("\nSeleccion: ");
                 b = int.TryParse(Console.ReadLine(), out opcion);
-                if (opcion < 0 || opcion > 3 || !b) {
+                if (opcion < 1 || opcion > 2 || !b)
+                {
+                    Console.WriteLine("Opcion no valida, ingresar nuevamente");
+                    b = false;
+                }
+            } while (!b);
+
+            if (opcion == 2)
+                Formaciones(listaEquipos);
+
+        }
+
+        private static void Formaciones(List<Equipo> listaEquipos) {
+
+            for (int i = 0; i < listaEquipos.Count(); i++)
+            {
+                Console.WriteLine($"\n{i+1}. {listaEquipos[i].Nombre} ({listaEquipos[i].Abreviacion})");
+                Console.WriteLine($"~ Atacante: {listaEquipos[i].Atacante.Datos.Nombre}");
+                Console.WriteLine($"~ Capitan: {listaEquipos[i].Capitan.Datos.Nombre}");
+                Console.WriteLine($"~ Defensor: {listaEquipos[i].Defensor.Datos.Nombre}");
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~\n");
+            }
+
+            int opcion ; bool b; bool mostrarOtroEquipo;
+
+            Console.WriteLine("\n1. Comenzar partida");
+            Console.WriteLine("2. Mostrar informacion de equipo");
+
+            do
+            {
+                Console.WriteLine("\nSeleccion: ");
+                b = int.TryParse(Console.ReadLine(), out opcion);
+                if (opcion < 1 || opcion > 3 || !b)
+                {
                     Console.WriteLine("Opcion no valida, ingresar nuevamente");
                     b = false;
                 }
 
             } while (!b);
 
-            return opcion;
+            if (opcion == 2)
+            {
+                
+                do
+                {
+                    do
+                    {
+
+                        Console.WriteLine("\nNumero de equipo:");
+                        b = int.TryParse(Console.ReadLine(), out opcion);
+                        if (opcion < 1 || opcion > listaEquipos.Count() || !b)
+                        {
+                            Console.WriteLine("Opcion no valida, ingresar nuevamente");
+                            b = false;
+                        }
+
+                    } while (!b);
+
+                    InformacionEquipo(listaEquipos[opcion-1]);
+
+                    Console.WriteLine("\n1. Comenzar partida");
+                    Console.WriteLine("2. Mostrar informacion de otro equipo");
+
+                    do
+                    {
+
+                        Console.WriteLine("\nSeleccion:");
+                        b = int.TryParse(Console.ReadLine(), out opcion);
+                        if (opcion < 1 || opcion > 2 || !b)
+                        {
+                            Console.WriteLine("Opcion no valida, ingresar nuevamente");
+                            b = false;
+                        }
+
+                    } while (!b);
+
+                    if (opcion == 2)
+                        mostrarOtroEquipo = true;
+                    else
+                        mostrarOtroEquipo = false;
+
+                } while (mostrarOtroEquipo);
+            }
+
+        }
+
+        private static void InformacionEquipo(Equipo equipo) {
+
+            Console.WriteLine($"\n~~~~ {equipo.Nombre.ToUpper()} ({equipo.Abreviacion}) ~~~~");
+            Console.WriteLine($"~ Capitan: {equipo.Capitan.Datos.Nombre}");
+            Console.WriteLine($"~ Atacante: {equipo.Atacante.Datos.Nombre}");
+            Console.WriteLine($"~ Defensor: {equipo.Defensor.Datos.Nombre}");
+            Console.WriteLine($"~~ ESTADISTICAS ~~");
+            Console.WriteLine($"~ Tiro: {equipo.Estadisticas.Tiro} ~ Creacion: {equipo.Estadisticas.Creacion}");
+            Console.WriteLine($"~ Defensa Perimetro: {equipo.Estadisticas.DefensaPerimetro} ~ Defensa Interior: {equipo.Estadisticas.DefensaInterior}");
+
+        }
+
+        private static void InformacionPersonaje(Personaje personaje, string rol) {
+
+            Console.WriteLine($"\n~~~~ {rol} ~~~~");
+            Console.WriteLine($"~~~~ {personaje.Datos.Nombre.ToUpper()} ({personaje.Datos.Numero}) ~~~~");
+            Console.WriteLine($"~ Tiro: {personaje.Estadisticas.Tiro} ~ Creacion: {personaje.Estadisticas.Creacion}");
+            Console.WriteLine($"~ Defensa Perimetro: {personaje.Estadisticas.DefensaPerimetro} ~ Defensa Interior: {personaje.Estadisticas.DefensaInterior}");
+            Console.WriteLine($"~ PROMEDIO: {personaje.Estadisticas.Promedio}");
+
+        }
+
+        public static void Rival(Equipo equipo) {
+            int opcion; bool b;
+
+            Console.WriteLine("\n1. Iniciar partido");
+            Console.WriteLine("2. Mostrar informacion de rival");
+
+            do
+            {
+                Console.WriteLine("\nSeleccion:");
+                b = int.TryParse(Console.ReadLine(), out opcion);
+                if (opcion < 1 || opcion > 2 || !b)
+                {
+                    Console.WriteLine("Opcion no valida, ingresar nuevamente");
+                    b = false;
+                }
+
+            } while (!b);
+
+            if (opcion == 2)
+            {
+                InformacionEquipo(equipo);
+
+                Console.WriteLine("\n1. Iniciar partido");
+                Console.WriteLine("2. Mostrar informacion de personajes");
+
+                do
+                {
+                    Console.WriteLine("\nSeleccion:");
+                    b = int.TryParse(Console.ReadLine(), out opcion);
+                    if (opcion < 1 || opcion > 2 || !b)
+                    {
+                        Console.WriteLine("Opcion no valida, ingresar nuevamente");
+                        b = false;
+                    }
+                    
+                } while (!b);
+
+                if (opcion == 2)
+                {
+                    InformacionPersonaje(equipo.Capitan, "CAPITAN");
+                    InformacionPersonaje(equipo.Atacante, "ATACANTE");
+                    InformacionPersonaje(equipo.Defensor, "DEFENSOR");
+                }
+
+            }
+
+        }
+
+        public static void Cruces(Fase fase, List<Partidos.Partido> listapartidos) {
+
+            string stringFase;
+
+            if (fase == Fase.Cuartos)
+                stringFase = "CUARTOS DE FINAL";
+            else if (fase == Fase.Semis)
+                stringFase = "SEMIFINALES";
+            else /* (fase == FasePartido.Final) */
+                stringFase = "FINAL";
+
+            Console.WriteLine($"\n\n\n~~~~ {stringFase} ~~~~");
+            foreach (var partido in listapartidos)
+                Console.WriteLine($"~~ {partido.Local.Abreviacion} vs {partido.Visitante.Abreviacion} ~~");
+
+        }
+
+        public static void ResultadosFase(List<Partidos.Partido> listaPartidos) {
+
+            Console.WriteLine("\n~~~~ RESULTADOS ~~~~");
+
+            foreach (var partido in listaPartidos)
+            {
+                Console.WriteLine($"~~ {partido.Local.Abreviacion} [{partido.PtosLocal}] - [{partido.PtosVisitante}] {partido.Visitante.Abreviacion} ~~");
+            }
+
+        }
+
+        public static void MensajeCampeon(Equipo equipoCampeon) {
+
+            string nombreMayus = equipoCampeon.Nombre.ToUpper();
+
+            Console.WriteLine("\n");
+            
+            Console.WriteLine($"~~~~~~~~~~ {nombreMayus} CAMPEONES DE LA NBA ~~~~~~~~~~");
+            Console.WriteLine("\n");
+
         }
 
     }
 
-    public static class Equipos
+    public static class CreacionEquipos
     {
 
         public static List<Equipo> CrearEquipos(List<Personaje> capitanes, List<Personaje> atacantes, List<Personaje> defensores, List<APITeams> equiposAPI) {
@@ -283,13 +483,13 @@ public static class Ejecucion
             for (int i = 0; i < listaPersonajes.Count(); i++)
             {
 
-                Console.WriteLine($"\n{i+1}.\t\b\bDATOS:");
-                Console.WriteLine($" {listaPersonajes[i].Datos.Nombre} {listaPersonajes[i].Datos.Apellido} - {listaPersonajes[i].Datos.Numero}");
-                Console.WriteLine($" {listaPersonajes[i].Datos.Equipo.Nombre} - {listaPersonajes[i].Datos.Equipo.Abreviacion}");
-                Console.WriteLine("\tESTADISTICAS:");
-                Console.WriteLine($"- Tiro: {listaPersonajes[i].Estadisticas.Tiro} - Creacion: {listaPersonajes[i].Estadisticas.Creacion}");
-                Console.WriteLine($"- Defensa Perimetro: {listaPersonajes[i].Estadisticas.DefensaPerimetro} - Defensa Interior: {listaPersonajes[i].Estadisticas.DefensaInterior}");
-                Console.WriteLine($"- PROMEDIO: {listaPersonajes[i].Estadisticas.Promedio}");
+                Console.WriteLine($"\n{i+1}.\n~~ DATOS ~~");
+                Console.WriteLine($"~ {listaPersonajes[i].Datos.Nombre} ~ {listaPersonajes[i].Datos.Numero}");
+                Console.WriteLine($"~ {listaPersonajes[i].Datos.Equipo.Nombre} ~ {listaPersonajes[i].Datos.Equipo.Abreviacion}");
+                Console.WriteLine("~~ ESTADISTICAS ~~");
+                Console.WriteLine($"~ Tiro: {listaPersonajes[i].Estadisticas.Tiro} ~ Creacion: {listaPersonajes[i].Estadisticas.Creacion}");
+                Console.WriteLine($"~ Defensa Perimetro: {listaPersonajes[i].Estadisticas.DefensaPerimetro} ~ Defensa Interior: {listaPersonajes[i].Estadisticas.DefensaInterior}");
+                Console.WriteLine($"~ PROMEDIO: {listaPersonajes[i].Estadisticas.Promedio}");
 
             }
 
@@ -327,7 +527,7 @@ public static class Ejecucion
             var equiposAPIDesordenados = equiposAPI.OrderBy(x => random.Next()).ToList();
             equiposAPIDesordenados.Remove(equipoUsuario);
 
-            for (int i = 1; i < 7; i++)
+            for (int i = 1; i < 8; i++)
             {
                 
                 equipos[i].Nombre = equiposAPIDesordenados[i-1].Fullname;
@@ -347,12 +547,12 @@ public static class Ejecucion
 
             Equipo local;
             Equipo visitante;
-            FasePartido fase;
+            Fase fase;
             int ptosLocal;
             int ptosVisitante;
             Equipo ganador;
 
-            public Partido(Equipo local, Equipo visitante, FasePartido fase)
+            public Partido(Equipo local, Equipo visitante, Fase fase)
             {
                 this.local = local;
                 this.visitante = visitante;
@@ -365,10 +565,15 @@ public static class Ejecucion
             public Equipo Visitante { get => visitante; set => visitante = value; }
             public int PtosLocal { get => ptosLocal; }
             public int PtosVisitante { get => ptosVisitante; }
-            public FasePartido Fase { get => fase; }
+            public Fase Fase { get => fase; }
             public Equipo Ganador { get => ganador; }
 
-            public void JugarPartido() {
+            public void Jugar() {
+
+                Console.WriteLine("\n\n~~~~ SIGUIENTE PARTIDO ~~~~");
+                Console.WriteLine($"~~ LOCAL: {local.Nombre} ({local.Abreviacion}) - VISITANTE: {visitante.Nombre} ({visitante.Abreviacion}) ~~");
+                Menu.Rival(visitante);
+                Console.WriteLine("\npresionar espacio para comenzar el partido..."); Console.ReadKey();
 
                 JugarTiempoRegular();
                 if (ptosLocal > ptosVisitante)
@@ -378,12 +583,12 @@ public static class Ejecucion
                 else 
                 {
                     int i = 1;
-                    do
+                    while (ptosLocal == ptosVisitante)
                     {
                         JugarTiempoExtra(i);
-                        if (ganador != local && ganador !=  visitante)
+                        if (ptosLocal == ptosVisitante)
                             i++;
-                    } while (ganador == local || ganador == visitante);
+                    }
 
                 }
 
@@ -391,7 +596,7 @@ public static class Ejecucion
 
             }
  
-            public void SimularPartido() {
+            public void Simular() {
 
                 SimularTiempoRegular();
                 if (ptosLocal > ptosVisitante)
@@ -400,13 +605,8 @@ public static class Ejecucion
                     ganador = visitante;
                 else 
                 {
-                    int i = 1;
-                    do
-                    {
-                        SimularTiempoExtra(i);
-                        if (ganador != local && ganador !=  visitante)
-                            i++;
-                    } while (ganador == local || ganador == visitante);
+                    while (ptosLocal == ptosVisitante);
+                        SimularTiempoExtra();
 
                 }
 
@@ -414,10 +614,6 @@ public static class Ejecucion
 
             private void JugarTiempoRegular() {
 
-                Console.WriteLine("\n");
-                Console.WriteLine("INICIO DE PARTIDO");
-                Console.WriteLine($"LOCAL: {local.Nombre} ({local.Abreviacion}) - VISITANTE: {visitante.Nombre} ({visitante.Abreviacion})");
-                Console.WriteLine("presionar cualquier tecla para comenzar el partido..."); Console.ReadKey();
                 for (int i = 1; i <= 4; i++)
                 {
                     Console.WriteLine("\n");
@@ -435,13 +631,13 @@ public static class Ejecucion
                     if (i != 4)
                     {
                         Console.WriteLine($"FIN DE {i}/4 CUARTO");
-                        Console.WriteLine($"LOCAL: {ptosLocal} - VISITANTE: {ptosVisitante}");
-                        Console.WriteLine("presionar cualquier tecla para comenzar el proximo cuarto..."); Console.ReadKey();
+                        Console.WriteLine($"{local.Abreviacion}: {ptosLocal} - {visitante.Abreviacion}: {ptosVisitante}");
+                        Console.WriteLine("presionar espacio para comenzar el proximo cuarto..."); Console.ReadKey();
                     }
                     else
                     {
                         Console.WriteLine("FIN DEL PARTIDO");
-                        Console.WriteLine($"LOCAL: {ptosLocal} - VISITANTE: {ptosVisitante}");
+                        Console.WriteLine($"{local.Abreviacion}: {ptosLocal} - {visitante.Abreviacion}: {ptosVisitante}");
                     }
 
                 }
@@ -482,12 +678,12 @@ public static class Ejecucion
 
             }
 
-            private void SimularTiempoExtra(int i) {
+            private void SimularTiempoExtra() {
 
                 for (int j = 1; j <= 10; j+=2)
                 {
-                    ptosLocal += RealizarAtaque(local, visitante, false);
-                    ptosVisitante += RealizarAtaque(visitante, local, false);
+                    ptosLocal += SimularAtaque(local, visitante, false);
+                    ptosVisitante += SimularAtaque(visitante, local, false);
                 }
 
             }
@@ -810,6 +1006,38 @@ public static class Ejecucion
 
     }
 
+    public static Dictionary<Fase, List<Partidos.Partido>> CrearCrucesCuartos(List<Equipo> equipos) {
+
+        var DiccPartidos = new Dictionary<Fase, List<Partidos.Partido>>();
+        DiccPartidos[Fase.Cuartos] = new List<Partidos.Partido>();
+
+        for (int j = 0; j < 8; j+=2)
+            DiccPartidos[Fase.Cuartos].Add(new Partidos.Partido(equipos[j], equipos[j+1], Fase.Cuartos)); 
+
+        return DiccPartidos;
+    }
+
+    public static void CrearCrucesSemis(Dictionary<Fase, List<Partidos.Partido>> DiccPartidos) {
+
+        DiccPartidos[Fase.Semis] = new List<Partidos.Partido>();
+        for (int i = 0; i < 4; i+=2)
+            {
+                var semifinalista1 = DiccPartidos[Fase.Cuartos][i].Ganador;
+                var semifinalista2 = DiccPartidos[Fase.Cuartos][i+1].Ganador;
+                DiccPartidos[Fase.Semis].Add(new Partidos.Partido(semifinalista1, semifinalista2, Fase.Semis));
+            }
+
+    }
+
+    public static void CrearFinal(Dictionary<Fase, List<Partidos.Partido>> DiccPartidos) {
+
+        DiccPartidos[Fase.Final] = new List<Partidos.Partido>();
+        var finalista1 = DiccPartidos[Fase.Semis][0].Ganador;
+        var finalista2 = DiccPartidos[Fase.Semis][1].Ganador;
+        DiccPartidos[Fase.Final].Add(new Partidos.Partido(finalista1, finalista2, Fase.Final));
+
+    }
+
 }
     
 public enum TipoDeAtaque 
@@ -827,9 +1055,9 @@ public enum TipoDeDefensa
         Fallida
     }
 
-public enum FasePartido
+public enum Fase
     {
-        CuartoDeFinal,
-        Semifinal,
+        Cuartos,
+        Semis,
         Final
     }

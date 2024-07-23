@@ -40,6 +40,10 @@ List<APIPlayers> atacantesAPI = JsonSerializer.Deserialize<List<APIPlayers>>(ata
 List<APIPlayers> defensoresAPI = JsonSerializer.Deserialize<List<APIPlayers>>(defensoresAPIString);
 List<APITeams> equiposAPI = JsonSerializer.Deserialize<List<APITeams>>(equiposAPIString);
 
+
+
+
+
 // ~~~~~~~~~~~~~~~~~~~~~~~
 
 // LISTAS DE PERSONAJES SEPARADOS POR ROL Y ORDENADOS POR ID
@@ -47,54 +51,62 @@ var listaCapitanes = Ejecucion.CrearPersonajes(capitanesAPI, Rol.Capitan);
 var listaAtacantes = Ejecucion.CrearPersonajes(atacantesAPI, Rol.Atacante);
 var listaDefensores = Ejecucion.CrearPersonajes(defensoresAPI, Rol.Defensor);
 
-Ejecucion.Menus.Inicio();
-Ejecucion.Menus.MenuInicio();
+Ejecucion.Menu.NombreJuego();
+Console.WriteLine("\npresionar espacio para continuar..."); Console.ReadKey();
+List<Equipo> equipos = Ejecucion.CreacionEquipos.CrearEquipos(listaCapitanes, listaAtacantes, listaDefensores, equiposAPI);
 
-// ELIGE EQUIPO DEL USUARIO Y CREA 7 EQUIPOS
-List<Equipo> equipos = Ejecucion.Equipos.CrearEquipos(listaCapitanes, listaAtacantes, listaDefensores, equiposAPI);
+Ejecucion.Menu.Inicio(equipos);
 
-// CREACION DICCIONARIO DE PARTIDOS POR FASE
-var DiccionarioPartidos = new Dictionary<FasePartido, List<Ejecucion.Partidos.Partido>>()
-{
-    { FasePartido.CuartoDeFinal, new List<Ejecucion.Partidos.Partido>() },
-    { FasePartido.Semifinal, new List<Ejecucion.Partidos.Partido>() },
-    { FasePartido.Final, new List<Ejecucion.Partidos.Partido>() }
-};
+// ASIGNACION PARTIDOS DE CUARTOS DE FINAL
+var DiccPartidos = Ejecucion.CrearCrucesCuartos(equipos);
+Ejecucion.Menu.Cruces(Fase.Cuartos, DiccPartidos[Fase.Cuartos]);
 
-for (int j = 0; j < 8; j+=2)
-    DiccionarioPartidos[FasePartido.CuartoDeFinal].Add(new Ejecucion.Partidos.Partido(equipos[j], equipos[j+1], FasePartido.CuartoDeFinal)); 
-
-// JUGAR O SIMULAR CUARTOS DE FINAL
-DiccionarioPartidos[FasePartido.CuartoDeFinal][0].JugarPartido();
+// JUGAR O SIMULAR PARTIDOS DE CUARTOS DE FINAL
+DiccPartidos[Fase.Cuartos][0].Jugar();
 for (int i = 1; i < 4; i++)
-    DiccionarioPartidos[FasePartido.CuartoDeFinal][i].SimularPartido();
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    DiccPartidos[Fase.Cuartos][i].Simular();
 
-for (int i = 0; i < 4; i+=2)
-{
-    var semifinalista1 = DiccionarioPartidos[FasePartido.CuartoDeFinal][i].Ganador;
-    var semifinalista2 = DiccionarioPartidos[FasePartido.CuartoDeFinal][i+1].Ganador;
-    DiccionarioPartidos[FasePartido.Semifinal].Add(new Ejecucion.Partidos.Partido(semifinalista1, semifinalista2, FasePartido.Semifinal));
-}
+
+Console.WriteLine("presionar espacio para continuar..."); Console.ReadKey();
+// MOSTRAR PARTIDOS DE CUARTOS DE FINAL
+Ejecucion.Menu.ResultadosFase(DiccPartidos[Fase.Cuartos]);
+Console.WriteLine("presionar espacio para pasar a la siguiente fase..."); Console.ReadKey();
+
+// SEMIFINALES
+
+// ASIGNACION PARTIDOS DE SEMIFINALES
+Ejecucion.CrearCrucesSemis(DiccPartidos);
+Ejecucion.Menu.Cruces(Fase.Semis, DiccPartidos[Fase.Semis]);
 
 // JUGAR O SIMULAR SEMIFINALES
-if (DiccionarioPartidos[FasePartido.Semifinal][0].Local == equipos[0])
-    DiccionarioPartidos[FasePartido.Semifinal][0].JugarPartido();
+if (DiccPartidos[Fase.Semis][0].Local == equipos[0])
+    DiccPartidos[Fase.Semis][0].Jugar();
 else
-    DiccionarioPartidos[FasePartido.Semifinal][0].SimularPartido();
+    DiccPartidos[Fase.Semis][0].Simular();
 
-DiccionarioPartidos[FasePartido.Semifinal][1].SimularPartido();
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+DiccPartidos[Fase.Semis][1].Simular();
 
 
-var finalista1 = DiccionarioPartidos[FasePartido.Semifinal][0].Ganador;
-var finalista2 = DiccionarioPartidos[FasePartido.Semifinal][1].Ganador;
-DiccionarioPartidos[FasePartido.Final].Add(new Ejecucion.Partidos.Partido(finalista1, finalista2, FasePartido.Final));
+Console.WriteLine("presione espacio para continuar..."); Console.ReadKey();
+// MOSTRAR PARTIDOS DE SEMIFINALES
+Ejecucion.Menu.ResultadosFase(DiccPartidos[Fase.Semis]);
+Console.WriteLine("presionar espacio para pasar a la siguiente fase..."); Console.ReadKey();
+
+// FINAL
+
+// ASIGNACION PARTIDO FINAL
+Ejecucion.CrearFinal(DiccPartidos);
+Ejecucion.Menu.Cruces(Fase.Final, DiccPartidos[Fase.Final]);
 
 // JUGAR O SIMULAR FINAL
-if (DiccionarioPartidos[FasePartido.Final][0].Local == equipos[0])
-    DiccionarioPartidos[FasePartido.Final][0].JugarPartido();
+if (DiccPartidos[Fase.Final][0].Local == equipos[0])
+    DiccPartidos[Fase.Final][0].Jugar();
 else
-    DiccionarioPartidos[FasePartido.Final][0].SimularPartido();
+{
+    DiccPartidos[Fase.Final][0].Simular();
+    Ejecucion.Menu.ResultadosFase(DiccPartidos[Fase.Final]);
+}
 
+Ejecucion.Menu.MensajeCampeon(DiccPartidos[Fase.Final][0].Ganador);
+Console.WriteLine("presionar espacio para cerrar juego");
 Console.ReadKey();
