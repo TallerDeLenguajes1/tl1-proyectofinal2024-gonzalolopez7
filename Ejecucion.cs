@@ -179,9 +179,16 @@ public static class Ejecucion
         public static void Inicio(List<Equipo> listaEquipos) {
             int opcion; bool b;
             
-            Console.WriteLine("\n~~~~ MENU ~~~~");
+            Console.Title = "NBA API";
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~ MENU ~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
             Console.WriteLine("1. Comenzar partida");
             Console.WriteLine("2. Mostrar lista de equipos");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            Console.ForegroundColor = ConsoleColor.Gray;
 
             do
             {
@@ -201,25 +208,43 @@ public static class Ejecucion
 
         private static void Formaciones(List<Equipo> listaEquipos) {
 
-            for (int i = 0; i < listaEquipos.Count(); i++)
+            Console.Clear();
+            for (int i = 0; i < listaEquipos.Count(); i+=2)
             {
                 Console.WriteLine($"\n{i+1}. {listaEquipos[i].Nombre} ({listaEquipos[i].Abreviacion})");
                 Console.WriteLine($"~ Atacante: {listaEquipos[i].Atacante.Datos.Nombre}");
                 Console.WriteLine($"~ Capitan: {listaEquipos[i].Capitan.Datos.Nombre}");
                 Console.WriteLine($"~ Defensor: {listaEquipos[i].Defensor.Datos.Nombre}");
-                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~\n");
+                Console.SetCursorPosition(70, Console.GetCursorPosition().Top - 4);
+                Console.Write($"{i+2}. {listaEquipos[i+1].Nombre} ({listaEquipos[i+1].Abreviacion})");
+                Console.SetCursorPosition(70, Console.GetCursorPosition().Top + 1);
+                Console.Write($"~ Atacante: {listaEquipos[i+1].Atacante.Datos.Nombre}");
+                Console.SetCursorPosition(70, Console.GetCursorPosition().Top + 1);
+                Console.Write($"~ Capitan: {listaEquipos[i+1].Capitan.Datos.Nombre}");
+                Console.SetCursorPosition(70, Console.GetCursorPosition().Top + 1);
+                Console.Write($"~ Defensor: {listaEquipos[i+1].Defensor.Datos.Nombre}");
+                Console.SetCursorPosition(0, Console.GetCursorPosition().Top + 1);
+                Console.Write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                Console.SetCursorPosition(70, Console.GetCursorPosition().Top);
+                Console.Write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             }
 
             int opcion ; bool b; bool mostrarOtroEquipo;
 
-            Console.WriteLine("\n1. Comenzar partida");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~ MENU ~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            Console.WriteLine("1. Comenzar partida");
             Console.WriteLine("2. Mostrar informacion de equipo");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            Console.ForegroundColor = ConsoleColor.Gray;
 
             do
             {
                 Console.WriteLine("\nSeleccion: ");
                 b = int.TryParse(Console.ReadLine(), out opcion);
-                if (opcion < 1 || opcion > 3 || !b)
+                if (opcion < 1 || opcion > 2 || !b)
                 {
                     Console.WriteLine("Opcion no valida, ingresar nuevamente");
                     b = false;
@@ -247,8 +272,12 @@ public static class Ejecucion
 
                     InformacionEquipo(listaEquipos[opcion-1]);
 
-                    Console.WriteLine("\n1. Comenzar partida");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                    Console.WriteLine("1. Comenzar partida");
                     Console.WriteLine("2. Mostrar informacion de otro equipo");
+                    Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+                    Console.ForegroundColor = ConsoleColor.Gray;
 
                     do
                     {
@@ -274,7 +303,7 @@ public static class Ejecucion
         }
 
         private static void InformacionEquipo(Equipo equipo) {
-
+            
             Console.WriteLine($"\n~~~~ {equipo.Nombre.ToUpper()} ({equipo.Abreviacion}) ~~~~");
             Console.WriteLine($"~ Capitan: {equipo.Capitan.Datos.Nombre}");
             Console.WriteLine($"~ Atacante: {equipo.Atacante.Datos.Nombre}");
@@ -298,8 +327,13 @@ public static class Ejecucion
         public static void Rival(Equipo equipo) {
             int opcion; bool b;
 
-            Console.WriteLine("\n1. Iniciar partido");
-            Console.WriteLine("2. Mostrar informacion de rival");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("1. Iniciar partido");
+            Console.WriteLine("2. Mostrar informacion de equipo rival");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            Console.ForegroundColor = ConsoleColor.Gray;
+
 
             do
             {
@@ -317,8 +351,12 @@ public static class Ejecucion
             {
                 InformacionEquipo(equipo);
 
-                Console.WriteLine("\n1. Iniciar partido");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                Console.WriteLine("1. Iniciar partido");
                 Console.WriteLine("2. Mostrar informacion de personajes");
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+                Console.ForegroundColor = ConsoleColor.Gray;
 
                 do
                 {
@@ -354,6 +392,7 @@ public static class Ejecucion
             else /* (fase == FasePartido.Final) */
                 stringFase = "FINAL";
 
+            Console.Clear();
             Console.WriteLine($"\n\n\n~~~~ {stringFase} ~~~~");
             foreach (var partido in listapartidos)
                 Console.WriteLine($"~~ {partido.Local.Abreviacion} vs {partido.Visitante.Abreviacion} ~~");
@@ -424,7 +463,12 @@ public static class Ejecucion
             var defensor = new Personaje();
             int opcion; bool b = true;
 
-            Console.WriteLine("\tSELECCIONAR CAPITAN");
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~ SELECCIONAR CAPITAN ~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            Console.ForegroundColor = ConsoleColor.Gray;
             mostrarPersonajes(capitanes);
             do
             {
@@ -439,7 +483,12 @@ public static class Ejecucion
             } while (!b);
             capitan = capitanes.ElementAt(opcion-1);
 
-            Console.WriteLine("\tSELECCIONAR ATACANTE");
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~ SELECCIONAR ATACANTE ~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            Console.ForegroundColor = ConsoleColor.Gray;
             mostrarPersonajes(atacantes);
             do
             {
@@ -454,7 +503,12 @@ public static class Ejecucion
             } while (!b);
             atacante = atacantes.ElementAt(opcion-1);
 
-            Console.WriteLine("\tSELECCIONAR DEFENSORES");
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~ SELECCIONAR DEFENSOR ~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            Console.ForegroundColor = ConsoleColor.Gray;
             mostrarPersonajes(defensores);
             do
             {
@@ -480,23 +534,47 @@ public static class Ejecucion
 
         private static void mostrarPersonajes(List<Personaje> listaPersonajes) {
 
-            for (int i = 0; i < listaPersonajes.Count(); i++)
+            for (int i = 0; i < listaPersonajes.Count(); i+=2)
             {
 
-                Console.WriteLine($"\n{i+1}.\n~~ DATOS ~~");
+                Console.WriteLine($"\n{i+1}.");
+                Console.WriteLine("~~ DATOS ~~");
                 Console.WriteLine($"~ {listaPersonajes[i].Datos.Nombre} ~ {listaPersonajes[i].Datos.Numero}");
                 Console.WriteLine($"~ {listaPersonajes[i].Datos.Equipo.Nombre} ~ {listaPersonajes[i].Datos.Equipo.Abreviacion}");
                 Console.WriteLine("~~ ESTADISTICAS ~~");
                 Console.WriteLine($"~ Tiro: {listaPersonajes[i].Estadisticas.Tiro} ~ Creacion: {listaPersonajes[i].Estadisticas.Creacion}");
                 Console.WriteLine($"~ Defensa Perimetro: {listaPersonajes[i].Estadisticas.DefensaPerimetro} ~ Defensa Interior: {listaPersonajes[i].Estadisticas.DefensaInterior}");
                 Console.WriteLine($"~ PROMEDIO: {listaPersonajes[i].Estadisticas.Promedio}");
-
+                Console.SetCursorPosition(70, Console.GetCursorPosition().Top - 8);
+                Console.Write($"{i+2}.");
+                Console.SetCursorPosition(70, Console.GetCursorPosition().Top + 1);
+                Console.Write("~~ DATOS ~~");
+                Console.SetCursorPosition(70, Console.GetCursorPosition().Top + 1);
+                Console.Write($"~ {listaPersonajes[i+1].Datos.Nombre} ~ {listaPersonajes[i+1].Datos.Numero}");
+                Console.SetCursorPosition(70, Console.GetCursorPosition().Top + 1);
+                Console.Write($"~ {listaPersonajes[i+1].Datos.Equipo.Nombre} ~ {listaPersonajes[i+1].Datos.Equipo.Abreviacion}");
+                Console.SetCursorPosition(70, Console.GetCursorPosition().Top + 1);
+                Console.Write("~~ ESTADISTICAS ~~");
+                Console.SetCursorPosition(70, Console.GetCursorPosition().Top + 1);
+                Console.Write($"~ Tiro: {listaPersonajes[i+1].Estadisticas.Tiro} ~ Creacion: {listaPersonajes[i+1].Estadisticas.Creacion}");
+                Console.SetCursorPosition(70, Console.GetCursorPosition().Top + 1);
+                Console.Write($"~ Defensa Perimetro: {listaPersonajes[i+1].Estadisticas.DefensaPerimetro} ~ Defensa Interior: {listaPersonajes[i+1].Estadisticas.DefensaInterior}");
+                Console.SetCursorPosition(70, Console.GetCursorPosition().Top + 1);
+                Console.Write($"~ PROMEDIO: {listaPersonajes[i+1].Estadisticas.Promedio}");
+                Console.WriteLine("\n");
             }
 
         }
 
         private static APITeams ElegirNombreEquipo(List<APITeams> equipos) {
             int opcion; bool b = true;
+
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~ SELECCIONAR EQUIPO ~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            Console.ForegroundColor = ConsoleColor.Gray;
 
             for (int i = 0; i < equipos.Count(); i++)
                 Console.WriteLine($"{i+1}. {equipos[i].Fullname} - {equipos[i].Abbreviation}");
@@ -516,7 +594,6 @@ public static class Ejecucion
             return equipos[opcion-1];
         }
 
-        // se puede optimizar la funcion eliminando la variable equipoUsuario y pasando equipos[0] como referencia a la funcion ElegirNombreEquipo
         private static void AsignarNombreEquipos(List<Equipo> equipos, List<APITeams> equiposAPI) {
 
             var equipoUsuario = ElegirNombreEquipo(equiposAPI);
@@ -570,6 +647,7 @@ public static class Ejecucion
 
             public void Jugar() {
 
+                Console.Clear();
                 Console.WriteLine("\n\n~~~~ SIGUIENTE PARTIDO ~~~~");
                 Console.WriteLine($"~~ LOCAL: {local.Nombre} ({local.Abreviacion}) - VISITANTE: {visitante.Nombre} ({visitante.Abreviacion}) ~~");
                 Menu.Rival(visitante);

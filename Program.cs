@@ -51,6 +51,7 @@ var listaCapitanes = Ejecucion.CrearPersonajes(capitanesAPI, Rol.Capitan);
 var listaAtacantes = Ejecucion.CrearPersonajes(atacantesAPI, Rol.Atacante);
 var listaDefensores = Ejecucion.CrearPersonajes(defensoresAPI, Rol.Defensor);
 
+Console.Clear();
 Ejecucion.Menu.NombreJuego();
 Console.WriteLine("\npresionar espacio para continuar..."); Console.ReadKey();
 List<Equipo> equipos = Ejecucion.CreacionEquipos.CrearEquipos(listaCapitanes, listaAtacantes, listaDefensores, equiposAPI);
@@ -77,6 +78,7 @@ Console.WriteLine("presionar espacio para pasar a la siguiente fase..."); Consol
 // ASIGNACION PARTIDOS DE SEMIFINALES
 Ejecucion.CrearCrucesSemis(DiccPartidos);
 Ejecucion.Menu.Cruces(Fase.Semis, DiccPartidos[Fase.Semis]);
+Console.WriteLine("presionar espacio para continuar..."); Console.ReadKey();
 
 // JUGAR O SIMULAR SEMIFINALES
 if (DiccPartidos[Fase.Semis][0].Local == equipos[0])
