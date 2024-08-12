@@ -6,6 +6,8 @@ El jugador elige 3 entre 24 personajes basados en jugadores reales de la NBA con
 Los datos del juego son obtenidos de balldontlie API, una API que brinda todo tipo de información sobre la NBA, como equipos actuales, equipos historicos, estadisticas de equipos, estadisticas de jugadores, etc.
 Para este juego se consumió las estadisticas de la ultima temporada de los mejores 24 jugadores de la NBA y la información de los equipos actuales de la liga.
 
+[Pagina oficial de balldontlie API](https://www.balldontlie.io)
+
 ## Modalidad del juego
 El juego consiste en una fase de playoffs empezando desde cuartos de final. En cada instancia se juega un partido único y el ganador pasa a la siguiente fase.
 Cada equipo está compuesto de 3 jugadores: un capitán, un atacante y un defensor.
