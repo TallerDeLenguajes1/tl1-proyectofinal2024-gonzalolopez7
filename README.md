@@ -1,57 +1,41 @@
-# tl1-proyectofinal-2024-gonzalolopez7
+# NBA API
+NBA API es un juego de rol en el que el usuario y su equipo compite contra otros 7 equipos en unos playoffs al estilo de la NBA con un único partido por fase.
+El jugador elige 3 entre 24 personajes basados en jugadores reales de la NBA conformado por 8 capitanes, 8 atacantes y 8 defensores.
 
-## PERSONAJES
+## balldontlie API
+Los datos del juego son obtenidos de balldontlie API, una API que brinda todo tipo de información sobre la NBA, como equipos actuales, equipos historicos, estadisticas de equipos, estadisticas de jugadores, etc.
+Para este juego se consumió las estadisticas de la ultima temporada de los mejores 24 jugadores de la NBA y la información de los equipos actuales de la liga.
 
-### CAPITANES
-1. Giannis Antetkounmpo
-2. Luka Doncic
-3. Kevin Durant
-4. Shai Gilgeous-Alexander
-5. James Harden
-6. Kyrie Irving
-7. Lebron James
-8. Jayson Tatum
+## Modalidad del juego
+El juego consiste en una fase de playoffs empezando desde cuartos de final. En cada instancia se juega un partido único y el ganador pasa a la siguiente fase.
+Cada equipo está compuesto de 3 jugadores: un capitán, un atacante y un defensor.
+Los  son 4 cuartos en el que se hacen un total de 10 ataques (5 un equipo y 5 otro). Cuando termina el ultimo cuarto, gana el equipo que anotó mas puntos. En caso de empate se juega un cuarto mas (10 ataques) hasta que gane uno de los dos equipos.
 
-### ATACANTES
-1. Devin Booker
-2. Jaylen Brown
-3. Stephen Curry
-4. Trae Young
-5. Ja Morant
-6. Anthony Edwards
-7. LaMello Ball
-8. Tyrese Haliburton
-
-### DEFENSORES
-1. Bam Adebayo
-2. Anthony Davis
-3. Joel Embiid
-4. Rudy Gobert
-5. Nikola Jokic
-6. Kawhi Leonard
-7. Kristaps Porzingis
-8. Zion Williamson
-
-
-
-## FORMULAS ESTADISTICAS
-### CAPITANES
-- Tiro: [(4 * fg) + (3 * fg3) + (1.6 * ft)] * 1.8       - (8.0 - 9.5)
-- Creacion: ast / to * 3.5                              - (8.0 - 9.5)
-- Defensa Perimetro: stl * 6                            - (6.5 - 9.0)
-- Defensa Interior: (0.7 * dreb) + (0.7 * blk)          - (4.0 - 7.0)
-- PROMEDIO: 7.26                                        - (6.6 - 8.7)
-
-### ATACANTES
-- Tiro: [(5 * fg) + (3 * fg3) + (1.8 * ft)] * 1.8       - (8.5 - 10)
-- Creacion: ast / to * 3.5                              - (7.0 - 9.0)
-- Defensa Perimetro: stl * 7                            - (6.5 - 9.5)
-- Defensa Interior: (0.8 * dreb) + (0.8 * blk)          - (4.0 - 5.0)
-- PROMEDIO 6.95                                         - (6.5 - 8.3)
-
-### DEFENSORES
-- Tiro: (4 * fg) + (3 * fg3) + (1.6 * ft) * 1.6         - (6.5 - 7.5)
-- Creacion: ast / to * 3.5                              - (5.0 - 6.5)
-- Defensa Perimetro: stl * 5                            - (4.0 - 6.5)
-- Defensa Interior: (0.5 * dreb) + (0.5 * blk) * 2      - (6.5 - 10)
-- PROMEDIO: 6.86                                        - (5.5 - 7.6)
+## Personajes
+### Capitanes
+- Giannis Antetokounmpo
+- Luka Doncic
+- Kevin Durant
+- Shai Gilgeous-Alexander
+- James Harden
+- Kyrie Irving
+- LeBron James
+- Jayson Tatum
+### Atacantes
+- Devin Booker
+- Jaylen Brown
+- Stephen Curry
+- Trae Young
+- Ja Morant
+- Anthony Edwards
+- Lamelo Ball
+- Tyrese Haliburton
+### Defensores
+- Bam Adebayo
+- Anthony Davis
+- Joel Embiid
+- Rudy Gobert
+- Nikola Jokic
+- Kawhi Leonard
+- Kristaps Porzingis
+- Zion Williamson
