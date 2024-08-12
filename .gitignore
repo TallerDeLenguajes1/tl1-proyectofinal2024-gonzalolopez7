@@ -17,6 +17,7 @@ capitanesOffline.json
 atacantesOffline.json
 defensoresOffline.json
 equiposOffline.json
+guardados
 
 # User-specific files
 *.rsuser
@@ -435,3 +436,4 @@ obj/
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,csharp,dotnetcore
 IDEAS.md
 ModalidadPartido.md
+.DS_Store

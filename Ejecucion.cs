@@ -1,7 +1,10 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 public static class Ejecucion
 {
     
-    public static List<Personaje> CrearPersonajes(List<APIPlayers> jugadores, Rol rol) {
+    public static List<Personaje> CrearPersonajes(List<APIPlayer> jugadores, Rol rol) {
         var listaPersonajes = new List<Personaje>();
 
         double tiro, creacion, defensaPerimetro, defensaInterior, promedio;
@@ -157,8 +160,9 @@ public static class Ejecucion
     public static class Menu
     {
         
-        public static void NombreJuego() {
+        public static void PantallaInicio() {
 
+            Console.Clear();
             Console.Title = "NBA API";
             Console.WriteLine("\n");
             Console.ForegroundColor = ConsoleColor.DarkBlue;
@@ -173,21 +177,60 @@ public static class Ejecucion
             Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             Console.ForegroundColor = ConsoleColor.Gray;
 
+            Console.WriteLine("\npresionar espacio para continuar..."); Console.ReadKey();
 
+        }
+
+        public static Partidas.Partida EleccionPartida() {
+            int opcion; bool b;
+
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~ NBA API ~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("1. Nueva partida");
+            if(Directory.GetFiles("guardados").Count() != 0)
+                Console.WriteLine("2. Cargar Partida");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.ForegroundColor = ConsoleColor.Gray;
+
+            do
+            {
+                Console.WriteLine("\nSeleccion: ");
+                b = int.TryParse(Console.ReadLine(), out opcion);
+                if (opcion < 1 || opcion > 2 || !b)
+                {
+                    Console.WriteLine("Opcion no valida, ingresar nuevamente");
+                    b = false;
+                }
+            } while (!b);
+
+            if (opcion == 2) {
+                return Partidas.Cargar();
+                
+            } else {
+                Console.Clear();
+                Console.WriteLine("cargando...");
+                var nuevaPartida = new Partidas.Partida
+                {
+                    Equipos = new List<Equipo>()
+                };
+                return nuevaPartida;
+            }
         }
 
         public static void Inicio(List<Equipo> listaEquipos) {
             int opcion; bool b;
             
-            Console.Title = "NBA API";
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            Console.WriteLine("~~~~~~~~~~ MENU ~~~~~~~~~~");
-            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~ PARTIDA ~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             Console.WriteLine("1. Comenzar partida");
             Console.WriteLine("2. Mostrar lista de equipos");
-            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             Console.ForegroundColor = ConsoleColor.Gray;
 
             do
@@ -302,6 +345,60 @@ public static class Ejecucion
 
         }
 
+        public static bool InicioDeFase(Partidas.Partida partidaActual) {
+            int opcion; bool b;
+
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~ FASE ~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("1. Comenzar fase");
+            Console.WriteLine("2. Guardar y salir");
+            Console.WriteLine("3. Salir sin guardar");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            Console.ForegroundColor = ConsoleColor.Gray;
+
+            do
+            {
+                Console.WriteLine("\nSeleccion: ");
+                b = int.TryParse(Console.ReadLine(), out opcion);
+                if (opcion < 1 || opcion > 3 || !b)
+                {
+                    Console.WriteLine("Opcion no valida, ingresar nuevamente");
+                    b = false;
+                }
+            } while (!b);
+
+            if (opcion == 1)
+            {
+
+                if (partidaActual.FaseActual == Fase.Cuartos)
+                {
+                    CrearCrucesCuartos(partidaActual.Equipos, partidaActual.HistorialPartidos);
+                    MostrarCruces(Fase.Cuartos, partidaActual.HistorialPartidos[Fase.Cuartos]);
+                } else if (partidaActual.FaseActual == Fase.Semis)
+                {
+                    CrearCrucesSemis(partidaActual.HistorialPartidos);
+                    MostrarCruces(Fase.Semis, partidaActual.HistorialPartidos[Fase.Semis]);
+                } else if (partidaActual.FaseActual == Fase.Final)
+                {
+                    CrearFinal(partidaActual.HistorialPartidos);    // NO ESTA ENTRANDO A LA FUNCION
+                    MostrarCruces(Fase.Final, partidaActual.HistorialPartidos[Fase.Final]);
+                }
+                return true;
+            } else if (opcion == 2)
+            {
+                Partidas.Guardar(partidaActual);
+                return false;
+            } else
+            {
+                Console.Clear();
+                Console.WriteLine("saliendo...");
+                return false;
+            }
+        }
+
         private static void InformacionEquipo(Equipo equipo) {
             
             Console.WriteLine($"\n~~~~ {equipo.Nombre.ToUpper()} ({equipo.Abreviacion}) ~~~~");
@@ -381,32 +478,86 @@ public static class Ejecucion
 
         }
 
-        public static void Cruces(Fase fase, List<Partidos.Partido> listapartidos) {
+        private static void CrearCrucesCuartos(List<Equipo> equipos, Dictionary<Fase, List<Partidos.Partido>> historialPartidos) {
+
+            historialPartidos[Fase.Cuartos] = new List<Partidos.Partido>();
+            for (int j = 0; j < 8; j+=2)
+                historialPartidos[Fase.Cuartos].Add(new Partidos.Partido(equipos[j], equipos[j+1], Fase.Cuartos));
+        }
+
+        private static void CrearCrucesSemis(Dictionary<Fase, List<Partidos.Partido>> historialPartidos) {
+
+            historialPartidos[Fase.Semis] = new List<Partidos.Partido>();
+            for (int i = 0; i < 4; i+=2)
+                {
+                    var semifinalista1 = historialPartidos[Fase.Cuartos][i].Ganador;
+                    var semifinalista2 = historialPartidos[Fase.Cuartos][i+1].Ganador;
+                    historialPartidos[Fase.Semis].Add(new Partidos.Partido(semifinalista1, semifinalista2, Fase.Semis));
+                }
+
+        }
+
+        private static void CrearFinal(Dictionary<Fase, List<Partidos.Partido>> historialPartidos) {
+
+            historialPartidos[Fase.Final] = new List<Partidos.Partido>();
+            var finalista1 = historialPartidos[Fase.Semis][0].Ganador;
+            var finalista2 = historialPartidos[Fase.Semis][1].Ganador;
+            historialPartidos[Fase.Final].Add(new Partidos.Partido(finalista1, finalista2, Fase.Final));
+
+        }
+
+        private static void MostrarCruces(Fase fase, List<Partidos.Partido> historialPartidos) {
 
             string stringFase;
 
             if (fase == Fase.Cuartos)
-                stringFase = "CUARTOS DE FINAL";
+                stringFase = "~~~~~ CUARTOS ~~~~~";
             else if (fase == Fase.Semis)
+                stringFase = "~~~ SEMIFINALES ~~~";
+            else /* (fase == FasePartido.Final) */
+                stringFase = "~~~~~~ FINAL ~~~~~~";
+
+            Console.Clear();
+            Console.WriteLine($"\n {stringFase} ");
+            foreach (var partido in historialPartidos)
+                Console.WriteLine($" ~~  {partido.Local.Abreviacion} vs. {partido.Visitante.Abreviacion}  ~~");
+            Console.WriteLine(" ~~~~~~~~~~~~~~~~~~~");
+        }
+
+        public static void JugarFase(List<Partidos.Partido> historialPartidos, Equipo equipoUsuario) {
+
+            if (historialPartidos[0].Local == equipoUsuario)
+                historialPartidos[0].Jugar();
+            else
+                historialPartidos[0].Simular();
+
+            for (int i = 1; i < historialPartidos.Count(); i++)
+                historialPartidos[i].Simular();
+
+        }
+
+        public static void FinalDeFase(Partidas.Partida partidaActual) {
+
+            string stringFase;
+
+            if (partidaActual.FaseActual == Fase.Cuartos)
+                stringFase = "CUARTOS DE FINAL";
+            else if (partidaActual.FaseActual == Fase.Semis)
                 stringFase = "SEMIFINALES";
             else /* (fase == FasePartido.Final) */
                 stringFase = "FINAL";
 
-            Console.Clear();
-            Console.WriteLine($"\n\n\n~~~~ {stringFase} ~~~~");
-            foreach (var partido in listapartidos)
-                Console.WriteLine($"~~ {partido.Local.Abreviacion} vs {partido.Visitante.Abreviacion} ~~");
+            Console.WriteLine($"\n~~~~ RESULTADOS {stringFase} ~~~~");
 
-        }
-
-        public static void ResultadosFase(List<Partidos.Partido> listaPartidos) {
-
-            Console.WriteLine("\n~~~~ RESULTADOS ~~~~");
-
-            foreach (var partido in listaPartidos)
-            {
+            foreach (var partido in partidaActual.HistorialPartidos[partidaActual.FaseActual])
                 Console.WriteLine($"~~ {partido.Local.Abreviacion} [{partido.PtosLocal}] - [{partido.PtosVisitante}] {partido.Visitante.Abreviacion} ~~");
-            }
+
+            if (partidaActual.FaseActual == Fase.Cuartos)
+                partidaActual.FaseActual = Fase.Semis;
+            else if (partidaActual.FaseActual == Fase.Semis)
+                partidaActual.FaseActual = Fase.Final;
+            else if (partidaActual.FaseActual == Fase.Final)
+                partidaActual.FaseActual = Fase.Terminada;
 
         }
 
@@ -419,6 +570,88 @@ public static class Ejecucion
             Console.WriteLine($"~~~~~~~~~~ {nombreMayus} CAMPEONES DE LA NBA ~~~~~~~~~~");
             Console.WriteLine("\n");
 
+        }
+
+    }
+
+    public static class Partidas {
+
+        public class Partida {
+
+            List<Equipo> equipos;
+            Fase faseActual;
+            Dictionary<Fase, List<Partidos.Partido>> historialPartidos;
+
+            public List<Equipo> Equipos { get => equipos; set => equipos = value; }
+            public Fase FaseActual { get => faseActual; set => faseActual = value; }
+            public Dictionary<Fase, List<Partidos.Partido>> HistorialPartidos { get => historialPartidos; set => historialPartidos = value; }
+        }
+
+        public static void Guardar(Partida partidaActual) {
+            string nombrePartida; int opcion ; bool b; bool sobrescribir;
+
+            do
+            {
+                Console.WriteLine("\nNombre de guardado: ");
+                nombrePartida = Console.ReadLine();
+                if (nombrePartida.Length == 0)
+                {
+                    b = false;
+                    Console.WriteLine("Nombre no valido, ingresar nuevamente");
+                } else if (File.Exists($"guardados/{nombrePartida}.json"))
+                {
+                    Console.WriteLine("\nYa existe una partida con ese nombre, Desea sobrescribirla?");
+                    Console.WriteLine("1. Si\n2. Elegir otro nombre");
+                    do
+                    {
+                        Console.WriteLine("\nSeleccion:");
+                        sobrescribir = int.TryParse(Console.ReadLine(), out opcion);
+                        if (opcion < 1 || opcion > 2 || sobrescribir)
+                        {
+                            Console.WriteLine("Opcion no valida, ingresar nuevamente");
+                            sobrescribir = false;
+                        }
+                    } while (!sobrescribir);
+                    b = opcion == 1 ? true : false;
+
+                } else
+                    b = true;
+            } while (!b);
+            
+            string json = JsonSerializer.Serialize(partidaActual, new JsonSerializerOptions { WriteIndented = true });
+            // File.Open($"guardados/{nombrePartida}.json", FileMode.Create);
+            File.WriteAllText($"guardados/{nombrePartida}.json", json);
+            Console.WriteLine("\nGuardado exitoso");
+        }
+
+        public static Partida Cargar() {
+            int opcion; bool b;
+
+            Console.WriteLine("\n~~~ Cargar Partida ~~~");
+            string[] guardados = Directory.GetFiles("guardados");
+            for (int i = 0; i < guardados.Length; i++)
+            {
+                guardados[i] = guardados[i].Substring(10, guardados[i].Length - 15);
+                Console.WriteLine($"{i+1}. {guardados[i]}");
+            }
+
+            do
+            {
+                Console.WriteLine("\nSeleccion: ");
+                b = int.TryParse(Console.ReadLine(), out opcion);
+                if (opcion < 1 || opcion > guardados.Length || !b)
+                {
+                    Console.WriteLine("Opcion no valida, ingresar nuevamente");
+                    b = false;
+                }
+            } while (!b);
+
+            string path = "guardados/" + guardados[opcion-1] + ".json";
+            string json = File.ReadAllText(path);
+            var partida = new Partida();
+            partida = JsonSerializer.Deserialize<Partida>(json);
+            return partida;
+            
         }
 
     }
@@ -458,9 +691,7 @@ public static class Ejecucion
         }
         
         private static Equipo ElegirEquipo(List<Personaje> capitanes, List<Personaje> atacantes, List<Personaje> defensores) {
-            var capitan = new Personaje();
-            var atacante = new Personaje();
-            var defensor = new Personaje();
+            
             int opcion; bool b = true;
 
             Console.Clear();
@@ -481,7 +712,7 @@ public static class Ejecucion
                 }
                 
             } while (!b);
-            capitan = capitanes.ElementAt(opcion-1);
+            var capitan = capitanes.ElementAt(opcion-1);
 
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.DarkBlue;
@@ -501,7 +732,7 @@ public static class Ejecucion
                 }
                 
             } while (!b);
-            atacante = atacantes.ElementAt(opcion-1);
+            var atacante = atacantes.ElementAt(opcion-1);
 
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.DarkGreen;
@@ -521,7 +752,7 @@ public static class Ejecucion
                 }
                 
             } while (!b);
-            defensor = defensores.ElementAt(opcion-1);
+            var defensor = defensores.ElementAt(opcion-1);
 
             var equipoUsuario = new Equipo(
                 capitan,
@@ -629,6 +860,16 @@ public static class Ejecucion
             int ptosVisitante;
             Equipo ganador;
 
+            [JsonConstructor]
+            public Partido(Equipo local, Equipo visitante, Fase fase, int ptosLocal, int ptosVisitante, Equipo ganador){
+                this.local = local;
+                this.visitante = visitante;
+                this.fase = fase;
+                this.ptosLocal = ptosLocal;
+                this.ptosVisitante = ptosVisitante;
+                this.ganador = ganador;
+            }
+
             public Partido(Equipo local, Equipo visitante, Fase fase)
             {
                 this.local = local;
@@ -654,9 +895,10 @@ public static class Ejecucion
                 Console.WriteLine("\npresionar espacio para comenzar el partido..."); Console.ReadKey();
 
                 JugarTiempoRegular();
+                
                 if (ptosLocal > ptosVisitante)
                     ganador = local;
-                if (ptosLocal < ptosVisitante)
+                else if (ptosLocal < ptosVisitante)
                     ganador = visitante;
                 else 
                 {
@@ -670,7 +912,11 @@ public static class Ejecucion
 
                 }
 
-                Console.WriteLine($"GANADOR: {ganador.Nombre} ({ganador.Abreviacion}) ");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"\n~~ FIN DEL PARTIDO ~~");
+                Console.WriteLine($"~~ GANADOR: {ganador.Nombre} ({ganador.Abreviacion}) ~~");
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~");
+                Console.ForegroundColor = ConsoleColor.Gray;
 
             }
  
@@ -698,25 +944,24 @@ public static class Ejecucion
                     Console.WriteLine($"INICIO {i}/4 CUARTO");
                     for (int j = 1; j <= 10; j+=2)
                     {
+                        Console.ForegroundColor = ConsoleColor.DarkBlue;
                         Console.WriteLine("\n");
                         Console.WriteLine($"ATAQUE {j}:");
                         ptosLocal += RealizarAtaque(local, visitante, false);
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
                         Console.WriteLine("\n");
                         Console.WriteLine($"ATAQUE {j+1}:");
                         ptosVisitante += RealizarAtaque(visitante, local, false);
                     }
                     Console.WriteLine("\n");
-                    if (i != 4)
-                    {
+                    
+                        Console.ForegroundColor = ConsoleColor.Gray;
                         Console.WriteLine($"FIN DE {i}/4 CUARTO");
                         Console.WriteLine($"{local.Abreviacion}: {ptosLocal} - {visitante.Abreviacion}: {ptosVisitante}");
-                        Console.WriteLine("presionar espacio para comenzar el proximo cuarto..."); Console.ReadKey();
-                    }
-                    else
-                    {
-                        Console.WriteLine("FIN DEL PARTIDO");
-                        Console.WriteLine($"{local.Abreviacion}: {ptosLocal} - {visitante.Abreviacion}: {ptosVisitante}");
-                    }
+                        if (i != 4)
+                        {
+                            Console.WriteLine("presionar espacio para comenzar el proximo cuarto..."); Console.ReadKey();
+                        }
 
                 }
 
@@ -746,9 +991,11 @@ public static class Ejecucion
                 Console.WriteLine($"INICIO DE TIEMPO EXTRA {i}");
                 for (int j = 1; j <= 10; j+=2)
                 {
+                    Console.ForegroundColor = ConsoleColor.Blue;
                     Console.WriteLine("\n");
                     Console.WriteLine($"ATAQUE {j}:");
                     ptosLocal += RealizarAtaque(local, visitante, false);
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
                     Console.WriteLine("\n");
                     Console.WriteLine($"ATAQUE {j+1}:");
                     ptosVisitante += RealizarAtaque(visitante, local, false);
@@ -1082,60 +1329,29 @@ public static class Ejecucion
 
         }
 
-    }
+        private enum TipoDeAtaque 
+        {
+            Bandeja,
+            Dunk,
+            Triple
+        }
 
-    public static Dictionary<Fase, List<Partidos.Partido>> CrearCrucesCuartos(List<Equipo> equipos) {
-
-        var DiccPartidos = new Dictionary<Fase, List<Partidos.Partido>>();
-        DiccPartidos[Fase.Cuartos] = new List<Partidos.Partido>();
-
-        for (int j = 0; j < 8; j+=2)
-            DiccPartidos[Fase.Cuartos].Add(new Partidos.Partido(equipos[j], equipos[j+1], Fase.Cuartos)); 
-
-        return DiccPartidos;
-    }
-
-    public static void CrearCrucesSemis(Dictionary<Fase, List<Partidos.Partido>> DiccPartidos) {
-
-        DiccPartidos[Fase.Semis] = new List<Partidos.Partido>();
-        for (int i = 0; i < 4; i+=2)
-            {
-                var semifinalista1 = DiccPartidos[Fase.Cuartos][i].Ganador;
-                var semifinalista2 = DiccPartidos[Fase.Cuartos][i+1].Ganador;
-                DiccPartidos[Fase.Semis].Add(new Partidos.Partido(semifinalista1, semifinalista2, Fase.Semis));
-            }
-
-    }
-
-    public static void CrearFinal(Dictionary<Fase, List<Partidos.Partido>> DiccPartidos) {
-
-        DiccPartidos[Fase.Final] = new List<Partidos.Partido>();
-        var finalista1 = DiccPartidos[Fase.Semis][0].Ganador;
-        var finalista2 = DiccPartidos[Fase.Semis][1].Ganador;
-        DiccPartidos[Fase.Final].Add(new Partidos.Partido(finalista1, finalista2, Fase.Final));
+        private enum TipoDeDefensa
+        {
+            Bloqueo,
+            Robo,
+            Falta,
+            Fallida
+        }
 
     }
 
 }
-    
-public enum TipoDeAtaque 
-    {
-        Bandeja,
-        Dunk,
-        Triple
-    }
-
-public enum TipoDeDefensa
-    {
-        Bloqueo,
-        Robo,
-        Falta,
-        Fallida
-    }
 
 public enum Fase
-    {
-        Cuartos,
-        Semis,
-        Final
-    }
+{
+    Cuartos,
+    Semis,
+    Final,
+    Terminada
+}

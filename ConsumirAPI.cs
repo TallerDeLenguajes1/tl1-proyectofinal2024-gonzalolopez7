@@ -68,7 +68,7 @@ public static class ConsumirAPI
         return url;
     }
 
-    private static string ObtenerURLEstadisticas(List<APIPlayers> listaJugadores, int season)
+    private static string ObtenerURLEstadisticas(List<APIPlayer> listaJugadores, int season)
     {
         string url = $"https://api.balldontlie.io/v1/season_averages?season={season}&";
 
@@ -84,7 +84,7 @@ public static class ConsumirAPI
         return url;
     }
 
-    public static async Task<List<APIPlayers>> ObtenerListaJugadores(Rol rol)
+    public static async Task<List<APIPlayer>> ObtenerListaJugadores(Rol rol)
     {
         var diccionarioJugadores = ConsumirAPI.obtenerDiccionarioJugadores();
         string urlPlayers = ConsumirAPI.ObtenerURLJugadores(diccionarioJugadores, rol);
@@ -97,7 +97,7 @@ public static class ConsumirAPI
         response.EnsureSuccessStatusCode();
 
         APIPlayersData playersResponseBody = await response.Content.ReadFromJsonAsync<APIPlayersData>();
-        List<APIPlayers> playerList = playersResponseBody.playerList;
+        List<APIPlayer> playerList = playersResponseBody.playerList;
 
         string urlStats = ConsumirAPI.ObtenerURLEstadisticas(playerList, 2023);
 

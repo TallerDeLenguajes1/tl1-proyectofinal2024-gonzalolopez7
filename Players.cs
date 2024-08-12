@@ -2,10 +2,10 @@ using System.Text.Json.Serialization;
 
 public class APIPlayersData
 {
-    List<APIPlayers> listaJugadores;
+    List<APIPlayer> listaJugadores;
 
     [JsonPropertyName("data")]
-    public List<APIPlayers> playerList { get => listaJugadores; set => listaJugadores = value; }
+    public List<APIPlayer> playerList { get => listaJugadores; set => listaJugadores = value; }
 }
 
 public class APIStatsData
@@ -16,7 +16,7 @@ public class APIStatsData
     public List<APIStats> statList { get => listaStats; set => listaStats = value; }
 }
 
-public class APIPlayers
+public class APIPlayer
 { 
     int id;
     string firstName;

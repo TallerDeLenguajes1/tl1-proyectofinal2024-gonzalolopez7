@@ -1,10 +1,12 @@
+using System.Text.Json.Serialization;
+
 public class Personaje
 {
     Datos datos;
     Estadisticas estadisticas;
 
-    public Personaje()
-    {
+    public Personaje() {
+
     }
 
     public Personaje(Datos datos, Estadisticas estadisticas)
@@ -14,6 +16,7 @@ public class Personaje
     }
 
     public Datos Datos { get => datos; set => datos = value; }
+
     public Estadisticas Estadisticas { get => estadisticas; set => estadisticas = value; }
 }
 
@@ -24,6 +27,10 @@ public class Datos
     int numero;
     string nacionalidad;
     DatosEquipo equipo;
+
+    public Datos(){
+
+    }
 
     public Datos(int id, string nombre, string apellido, int numero, string nacionalidad, DatosEquipo equipo)
     {
@@ -65,7 +72,7 @@ public class Estadisticas
     double promedio;
 
     public Estadisticas(){
-
+        
     }
 
     public Estadisticas(double tiro, double creacion, double defensaPerimetro, double defensaInterior, double promedio)

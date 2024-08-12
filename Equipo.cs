@@ -7,10 +7,6 @@ public class Equipo
     Personaje defensor;
     Estadisticas estadisticas;
 
-    public Equipo()
-    {
-    }
-
     public Equipo(Personaje capitan, Personaje atacante, Personaje defensor)
     {
         this.capitan = capitan;
