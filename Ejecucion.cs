@@ -176,24 +176,16 @@ public static class Ejecucion
             Console.WriteLine("~~  ~~   ~~      ~~~  ~~~  ~~~~  ~~~  ~~  ~~~~~~~       ~~");
             Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             Console.ForegroundColor = ConsoleColor.Gray;
-
-            Console.WriteLine("\npresionar espacio para continuar..."); Console.ReadKey();
-
-        }
-
-        public static Partidas.Partida EleccionPartida() {
-            int opcion; bool b;
-
-            Console.Clear();
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             Console.WriteLine("~~~~~~~~~~ NBA API ~~~~~~~~~~");
             Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            Console.WriteLine("1. Nueva partida");
-            if(Directory.GetFiles("guardados").Count() != 0)
-                Console.WriteLine("2. Cargar Partida");
+            Console.WriteLine("1. Iniciar juego");
+            Console.WriteLine("2. Mostrar ganadores historicos");
             Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             Console.ForegroundColor = ConsoleColor.Gray;
+
+            int opcion; bool b;
 
             do
             {
@@ -206,20 +198,68 @@ public static class Ejecucion
                 }
             } while (!b);
 
-            if (opcion == 2) {
-                return Partidas.Cargar();
-                
-            } else {
-                Console.Clear();
-                Console.WriteLine("cargando...");
-                var nuevaPartida = new Partidas.Partida
-                {
-                    Equipos = new List<Equipo>()
-                };
-                return nuevaPartida;
+            if (opcion == 2)
+            {
+                MostrarGanadoresHistoricos();
+                Console.WriteLine("\n Presionar espacio para iniciar el juego..."); Console.ReadKey();
             }
+
         }
 
+        public static Partidas.Partida EleccionPartida() {
+            int opcion; bool b;
+
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                Console.WriteLine("~~~~~~~~~~ NBA API ~~~~~~~~~~");
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                Console.WriteLine("1. Nueva partida");
+                if(Directory.GetFiles("guardados").Count() != 0)
+                    Console.WriteLine("2. Cargar Partida");
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                Console.ForegroundColor = ConsoleColor.Gray;
+
+                do
+                {
+                    Console.WriteLine("\nSeleccion: ");
+                    b = int.TryParse(Console.ReadLine(), out opcion);
+                    if (opcion < 1 || opcion > 2 || !b)
+                    {
+                        Console.WriteLine("Opcion no valida, ingresar nuevamente");
+                        b = false;
+                    }
+                } while (!b);
+
+                if (opcion == 2) {
+                    return Partidas.Cargar();
+                    
+                } else
+                {
+                    Console.Clear();
+                    Console.WriteLine("cargando...");
+                    var nuevaPartida = new Partidas.Partida
+                    {
+                        Equipos = new List<Equipo>()
+                    };
+                    return null;
+                }
+        }
+
+        public static void MostrarGanadoresHistoricos(){
+
+            string json = File.ReadAllText("historialganadores.json");
+            var listaCampeones = JsonSerializer.Deserialize<List<EquipoCampeon>>(json);
+
+            Console.WriteLine("\n");
+            foreach (var campeon in listaCampeones)
+            {
+                Console.WriteLine($"{campeon.Nombre}");
+                Console.WriteLine($"{campeon.Capitan} - {campeon.Atacante} - {campeon.Defensor}");
+                Console.WriteLine("\n");
+            }
+
+        }
         public static void Inicio(List<Equipo> listaEquipos) {
             int opcion; bool b;
             
@@ -561,14 +601,48 @@ public static class Ejecucion
 
         }
 
-        public static void MensajeCampeon(Equipo equipoCampeon) {
+        public static void MensajeCampeon(Equipo equipoCampeon, Equipo equipoUsuario) {
 
             string nombreMayus = equipoCampeon.Nombre.ToUpper();
+            var capitan = equipoCampeon.Capitan;
+            var atacante = equipoCampeon.Atacante;
+            var defensor = equipoCampeon.Defensor;
 
             Console.WriteLine("\n");
-            
             Console.WriteLine($"~~~~~~~~~~ {nombreMayus} CAMPEONES DE LA NBA ~~~~~~~~~~");
+            Console.WriteLine($"ESTADISTICAS: {equipoCampeon.Estadisticas.Tiro} - {equipoCampeon.Estadisticas.Creacion} - {equipoCampeon.Estadisticas.DefensaPerimetro} - {equipoCampeon.Estadisticas.DefensaInterior}");
+
+            Console.WriteLine($"\nCAPITAN: {capitan.Datos.Nombre} ({capitan.Datos.Numero}) - {capitan.Datos.Nacionalidad}");
+            Console.WriteLine($"ESTADISTICAS: {capitan.Estadisticas.Tiro} - {capitan.Estadisticas.Creacion} - {capitan.Estadisticas.DefensaPerimetro} - {capitan.Estadisticas.DefensaInterior}");
+
+            Console.WriteLine($"\nATACANTE: {atacante.Datos.Nombre} ({atacante.Datos.Numero}) - {atacante.Datos.Nacionalidad}");
+            Console.WriteLine($"ESTADISTICAS: {atacante.Estadisticas.Tiro} - {atacante.Estadisticas.Creacion} - {atacante.Estadisticas.DefensaPerimetro} - {atacante.Estadisticas.DefensaInterior}");
+            
+            Console.WriteLine($"\nDEFENSOR: {defensor.Datos.Nombre} ({defensor.Datos.Numero}) - {defensor.Datos.Nacionalidad}");
+            Console.WriteLine($"ESTADISTICAS: {defensor.Estadisticas.Tiro} - {defensor.Estadisticas.Creacion} - {defensor.Estadisticas.DefensaPerimetro} - {defensor.Estadisticas.DefensaInterior}");
             Console.WriteLine("\n");
+
+            if (equipoUsuario == equipoCampeon) {
+
+                var nuevoGanador = new EquipoCampeon(equipoCampeon.Nombre, capitan.Datos.Nombre, atacante.Datos.Nombre, defensor.Datos.Nombre);
+
+                if(File.Exists("historialganadores.json"))
+                {    
+                    string json = File.ReadAllText("historialganadores.json");
+                    List<EquipoCampeon> listaGanadores = JsonSerializer.Deserialize<List<EquipoCampeon>>(json);
+                    listaGanadores.Add(nuevoGanador);
+                    json = JsonSerializer.Serialize(listaGanadores);
+                    File.Delete("historialganadores.json");
+                    File.WriteAllText("historialganadores.json", json);
+
+                } else
+                {
+                    var listaGanadores = new List<EquipoCampeon>(){nuevoGanador};
+                    string json = JsonSerializer.Serialize(listaGanadores);
+                    File.WriteAllText("historialganadores.json", json);
+
+                }
+            }
 
         }
 
@@ -606,7 +680,7 @@ public static class Ejecucion
                     {
                         Console.WriteLine("\nSeleccion:");
                         sobrescribir = int.TryParse(Console.ReadLine(), out opcion);
-                        if (opcion < 1 || opcion > 2 || sobrescribir)
+                        if (opcion < 1 || opcion > 2 || !sobrescribir)
                         {
                             Console.WriteLine("Opcion no valida, ingresar nuevamente");
                             sobrescribir = false;
@@ -908,6 +982,14 @@ public static class Ejecucion
                         JugarTiempoExtra(i);
                         if (ptosLocal == ptosVisitante)
                             i++;
+                        else
+                        {
+                            if (ptosLocal > ptosVisitante)
+                                ganador = local;
+                            else
+                                ganador = visitante;
+                        }
+                            
                     }
 
                 }
@@ -940,6 +1022,7 @@ public static class Ejecucion
 
                 for (int i = 1; i <= 4; i++)
                 {
+                    Console.Clear();
                     Console.WriteLine("\n");
                     Console.WriteLine($"INICIO {i}/4 CUARTO");
                     for (int j = 1; j <= 10; j+=2)
@@ -991,11 +1074,11 @@ public static class Ejecucion
                 Console.WriteLine($"INICIO DE TIEMPO EXTRA {i}");
                 for (int j = 1; j <= 10; j+=2)
                 {
-                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = ConsoleColor.DarkBlue;
                     Console.WriteLine("\n");
                     Console.WriteLine($"ATAQUE {j}:");
                     ptosLocal += RealizarAtaque(local, visitante, false);
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
                     Console.WriteLine("\n");
                     Console.WriteLine($"ATAQUE {j+1}:");
                     ptosVisitante += RealizarAtaque(visitante, local, false);

@@ -92,27 +92,37 @@ public static class ConsumirAPI
 
         HttpClient client = new HttpClient();
         client.DefaultRequestHeaders.Add("Authorization", apiKey);
+        HttpResponseMessage response = null;
 
-        HttpResponseMessage response = await client.GetAsync(urlPlayers);
-        response.EnsureSuccessStatusCode();
-
-        APIPlayersData playersResponseBody = await response.Content.ReadFromJsonAsync<APIPlayersData>();
-        List<APIPlayer> playerList = playersResponseBody.playerList;
-
-        string urlStats = ConsumirAPI.ObtenerURLEstadisticas(playerList, 2023);
-
-        response = await client.GetAsync(urlStats);
-        response.EnsureSuccessStatusCode();
-
-        APIStatsData statsResponseBody = await response.Content.ReadFromJsonAsync<APIStatsData>();
-        statsResponseBody.statList = statsResponseBody.statList.OrderBy(Estadisticas => Estadisticas.Id).ToList();
-
-        for (int i = 0; i < playerList.Count(); i++)
+        try
         {
-            playerList[i].Stats = statsResponseBody.statList[i];
+            response = await client.GetAsync(urlPlayers);
+        }
+        catch (HttpRequestException e)
+        {
+            Console.WriteLine($"Error en la solicitud HTTP: {e.Message}");
         }
 
-        return playerList;
+        if (response.IsSuccessStatusCode)
+        {
+            APIPlayersData playersResponseBody = await response.Content.ReadFromJsonAsync<APIPlayersData>();
+            List<APIPlayer> playerList = playersResponseBody.playerList;
+            string urlStats = ConsumirAPI.ObtenerURLEstadisticas(playerList, 2023);
+
+            response = await client.GetAsync(urlStats);
+            response.EnsureSuccessStatusCode();
+
+            APIStatsData statsResponseBody = await response.Content.ReadFromJsonAsync<APIStatsData>();
+            statsResponseBody.statList = statsResponseBody.statList.OrderBy(Estadisticas => Estadisticas.Id).ToList();
+
+            for (int i = 0; i < playerList.Count(); i++)
+            {
+                playerList[i].Stats = statsResponseBody.statList[i];
+            }
+
+            return playerList;
+        } else
+            return null;
     }
 
     public static async Task<List<APITeams>> ObtenerEquipos() {
@@ -121,13 +131,24 @@ public static class ConsumirAPI
 
         HttpClient client = new HttpClient();
         client.DefaultRequestHeaders.Add("Authorization", apiKey);
+        HttpResponseMessage response = null;
+         
+        try
+        {
+            response = await client.GetAsync(urlTeams);
+        }
+        catch (HttpRequestException e)
+        {
+            Console.WriteLine($"Error en la solicitud HTTP: {e.Message}");
+        }
 
-        HttpResponseMessage response = await client.GetAsync(urlTeams);
-        response.EnsureSuccessStatusCode();
-
-        APITeamsData teamsResponseBody = await response.Content.ReadFromJsonAsync<APITeamsData>();
-        List<APITeams> teamsList = teamsResponseBody.TeamsList;
-
-        return teamsList;
+        if (response.IsSuccessStatusCode)
+        {
+            APITeamsData teamsResponseBody = await response.Content.ReadFromJsonAsync<APITeamsData>();
+            List<APITeams> teamsList = teamsResponseBody.TeamsList;
+            return teamsList;
+        }
+        else
+            return null;
     }
 }

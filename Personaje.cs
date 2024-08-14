@@ -90,3 +90,25 @@ public class Estadisticas
     public double DefensaInterior { get => defensaInterior; set => defensaInterior = value; }
     public double Promedio { get => promedio; set => promedio = value; }
 }
+
+public class EquipoCampeon
+{
+    
+    string nombre;
+    string capitan;
+    string atacante;
+    string defensor;
+
+    public EquipoCampeon(string nombre, string capitan, string atacante, string defensor)
+    {
+        this.nombre = nombre;
+        this.capitan = capitan;
+        this.atacante = atacante;
+        this.defensor = defensor;
+    }
+
+    public string Nombre { get => nombre; set => nombre = value; }
+    public string Capitan { get => capitan; set => capitan = value; }
+    public string Atacante { get => atacante; set => atacante = value; }
+    public string Defensor { get => defensor; set => defensor = value; }
+}
