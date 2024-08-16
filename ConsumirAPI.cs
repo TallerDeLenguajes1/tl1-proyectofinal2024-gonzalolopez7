@@ -1,7 +1,7 @@
 using System.Net.Http.Json;
 public static class ConsumirAPI
 {
-    private static Dictionary<Rol, Dictionary<int, string>> obtenerDiccionarioJugadores()
+    private static Dictionary<Rol, Dictionary<int, string>> ObtenerDiccionarioJugadores()
     {
         var diccionarioCapitanes = new Dictionary<int, string>()
         {
@@ -86,8 +86,8 @@ public static class ConsumirAPI
 
     public static async Task<List<APIPlayer>> ObtenerListaJugadores(Rol rol)
     {
-        var diccionarioJugadores = ConsumirAPI.obtenerDiccionarioJugadores();
-        string urlPlayers = ConsumirAPI.ObtenerURLJugadores(diccionarioJugadores, rol);
+        var diccionarioJugadores = ObtenerDiccionarioJugadores();
+        string urlPlayers = ObtenerURLJugadores(diccionarioJugadores, rol);
         string apiKey = "d464875f-8435-459e-9caa-4cbd46861aed";
 
         HttpClient client = new HttpClient();
@@ -107,20 +107,32 @@ public static class ConsumirAPI
         {
             APIPlayersData playersResponseBody = await response.Content.ReadFromJsonAsync<APIPlayersData>();
             List<APIPlayer> playerList = playersResponseBody.playerList;
-            string urlStats = ConsumirAPI.ObtenerURLEstadisticas(playerList, 2023);
+            string urlStats = ObtenerURLEstadisticas(playerList, 2023);
 
-            response = await client.GetAsync(urlStats);
-            response.EnsureSuccessStatusCode();
+            HttpResponseMessage response2 = null;
 
-            APIStatsData statsResponseBody = await response.Content.ReadFromJsonAsync<APIStatsData>();
-            statsResponseBody.statList = statsResponseBody.statList.OrderBy(Estadisticas => Estadisticas.Id).ToList();
-
-            for (int i = 0; i < playerList.Count(); i++)
+            try
             {
-                playerList[i].Stats = statsResponseBody.statList[i];
+                response2 = await client.GetAsync(urlPlayers);
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine($"Error en la solicitud HTTP: {e.Message}");
             }
 
-            return playerList;
+            if (response2.IsSuccessStatusCode)
+            {
+                APIStatsData statsResponseBody = await response.Content.ReadFromJsonAsync<APIStatsData>();
+                statsResponseBody.statList = statsResponseBody.statList.OrderBy(Estadisticas => Estadisticas.Id).ToList();
+
+                for (int i = 0; i < playerList.Count(); i++)
+                {
+                    playerList[i].Stats = statsResponseBody.statList[i];
+                }
+
+                return playerList;
+            } else
+                return null;
         } else
             return null;
     }
